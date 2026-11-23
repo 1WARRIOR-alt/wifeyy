@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Letter For You 💜</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    :root {
+      --bg-deep: #080512;
+      --bg-mid: #130d26;
+      --bg-glow: #231746;
+      --lavender-bright: #e6d6ff;
+      --lavender-main: #c4a1ff;
+      --lavender-soft: rgba(196, 161, 255, 0.35);
+      --gold-soft: #f5d88c;
+      --text-main: #f6f1ff;
+      --wax-lavender: #8c52d6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 22%, var(--bg-glow) 0%, var(--bg-mid) 48%, var(--bg-deep) 100%);
+      color: var(--text-main);
+      font-family: "Cormorant Garamond", Georgia, serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+      user-select: none;
+    }
+
+    /* ===========================
+       SHARED NIGHT SKY & FALLING FLOWERS
+       =========================== */
+    #sky-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .moon {
+      position: fixed;
+      top: 6%;
+      right: 9%;
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #eadbff 55%, rgba(196, 161, 255, 0.18) 100%);
+      box-shadow: 0 0 45px rgba(210, 180, 255, 0.38), 0 0 110px rgba(170, 125, 255, 0.18);
+      opacity: 0.88;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #falling-flowers-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* ===========================
+       PAGE MANAGEMENT
+       =========================== */
+    .page {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      transition: opacity 0.85s ease, visibility 0.85s ease;
+    }
+
+    .page.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .page.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    /* ===========================
+       PAGE 1: CLEAN LAVENDER GARDEN
+       =========================== */
+    #page-garden {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .garden-mist {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 28vh;
+      background: linear-gradient(to top, rgba(8, 5, 18, 0.9) 0%, rgba(20, 13, 40, 0.38) 55%, transparent 100%);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .garden-stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .flower-wrap {
+      position: absolute;
+      bottom: -10px;
+      transform-origin: bottom center;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
+      animation: sway var(--sway-dur, 6.5s) ease-in-out infinite alternate;
+      animation-delay: var(--sway-delay, 0s);
+    }
+
+    .flower-wrap svg {
+      display: block;
+      overflow: visible;
+    }
+
+    .stem-path {
+      transform-box: fill-box;
+      transform-origin: bottom center;
+      transform: scaleY(0);
+      animation: growStem 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: var(--bloom-delay, 0.2s);
+    }
+
+    .leaf-group {
+      transform-box: fill-box;
+      transform-origin: bottom center;
+      transform: scale(0);
+      opacity: 0;
+      animation: growLeaf 1s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+      animation-delay: calc(var(--bloom-delay, 0.2s) + 0.5s);
+    }
+
+    .bloom-head {
+      transform-box: fill-box;
+      transform-origin: center center;
+      transform: scale(0.02) rotate(-10deg);
+      opacity: 0;
+      animation: bloomOpen 1.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation-delay: calc(var(--bloom-delay, 0.2s) + 0.85s);
+    }
+
+    @keyframes growStem {
+      0% { transform: scaleY(0); }
+      100% { transform: scaleY(1); }
+    }
+
+    @keyframes growLeaf {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes bloomOpen {
+      0% { transform: scale(0.05) rotate(-12deg); opacity: 0; }
+      45% { opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    @keyframes sway {
+      0% { transform: rotate(-2deg); }
+      100% { transform: rotate(2deg); }
+    }
+
+    /* ===========================
+       CENTRAL ENVELOPE ("OPEN LETTER")
+       =========================== */
+    .letter-trigger-area {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 6vh;
+      opacity: 0;
+      transform: translateY(18px) scale(0.96);
+      animation: revealLetter 1.3s ease forwards;
+      animation-delay: 1.5s;
+    }
+
+    @keyframes revealLetter {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .garden-whisper {
+      font-family: "Great Vibes", cursive;
+      font-size: clamp(1.85rem, 3.8vw, 2.75rem);
+      color: var(--lavender-bright);
+      text-shadow: 0 2px 22px rgba(196, 161, 255, 0.55);
+      letter-spacing: 0.03em;
+      text-align: center;
+      padding: 0 18px;
+    }
+
+    .envelope-btn {
+      position: relative;
+      width: 248px;
+      height: 160px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      outline: none;
+      perspective: 900px;
+      animation: floatEnvelope 4.2s ease-in-out infinite;
+      transition: transform 0.35s ease;
+    }
+
+    .envelope-btn:hover,
+    .envelope-btn:focus-visible {
+      transform: scale(1.06) translateY(-4px);
+    }
+
+    @keyframes floatEnvelope {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-9px); }
+    }
+
+    .envelope-glow {
+      position: absolute;
+      inset: -20px;
+      border-radius: 24px;
+      background: radial-gradient(circle, rgba(196, 161, 255, 0.32) 0%, rgba(140, 82, 214, 0.14) 55%, transparent 78%);
+      filter: blur(14px);
+      z-index: -1;
+    }
+
+    .envelope-body {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #241942 0%, #150e29 100%);
+      border: 1.5px solid rgba(212, 184, 255, 0.55);
+      border-radius: 12px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), inset 0 0 26px rgba(196, 161, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .envelope-body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(to top right, rgba(212, 184, 255, 0.12) 49.5%, transparent 50%),
+                  linear-gradient(to top left, rgba(212, 184, 255, 0.12) 49.5%, transparent 50%);
+      opacity: 0.5;
+    }
+
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 90px;
+      background: linear-gradient(180deg, #312359 0%, #1b1334 100%);
+      clip-path: polygon(0 0, 50% 92%, 100% 0);
+      border-top: 1.5px solid rgba(212, 184, 255, 0.6);
+      transform-origin: top center;
+      transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 3;
+    }
+
+    .envelope-btn:hover .envelope-flap,
+    .envelope-btn.opening .envelope-flap {
+      transform: rotateX(165deg);
+    }
+
+    .envelope-label {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--lavender-bright);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+      z-index: 2;
+    }
+
+    .wax-seal {
+      position: absolute;
+      top: 56px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 32%, #c99eff 0%, var(--wax-lavender) 65%, #51258a 100%);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65), inset 0 2px 5px rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 4;
+      transition: transform 0.45s ease, opacity 0.4s ease;
+    }
+
+    .wax-seal::after {
+      content: "♥";
+      color: #fff3ff;
+      font-size: 1.1rem;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+    }
+
+    .envelope-btn:hover .wax-seal,
+    .envelope-btn.opening .wax-seal {
+      transform: translate(-50%, -65%) scale(0.85);
+      opacity: 0.7;
+    }
+
+    .tap-hint {
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(230, 214, 255, 0.65);
+    }
+
+    /* ===========================
+       PAGE 2: WIDE CLEAN LETTER CARD
+       =========================== */
+    #page-letter {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 76px 24px 48px 24px;
+      overflow-y: auto;
+    }
+
+    #page-letter::-webkit-scrollbar {
+      width: 6px;
+    }
+    #page-letter::-webkit-scrollbar-thumb {
+      background: rgba(196, 161, 255, 0.32);
+      border-radius: 4px;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 22px;
+      z-index: 15;
+      background: rgba(24, 16, 46, 0.78);
+      color: var(--lavender-bright);
+      border: 1px solid rgba(196, 161, 255, 0.42);
+      border-radius: 999px;
+      padding: 9px 18px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(45, 30, 84, 0.92);
+      transform: translateX(-2px);
+    }
+
+    .letter-card {
+      position: relative;
+      z-index: 10;
+      width: min(92vw, 940px);
+      margin: auto 0;
+      padding: clamp(32px, 4.5vw, 52px) clamp(26px, 6vw, 68px);
+      background: linear-gradient(160deg, rgba(25, 17, 48, 0.88) 0%, rgba(13, 9, 28, 0.94) 100%);
+      border: 1px solid rgba(196, 161, 255, 0.38);
+      border-radius: 20px;
+      box-shadow: 0 25px 75px rgba(0, 0, 0, 0.75), 0 0 50px rgba(176, 132, 255, 0.12);
+      backdrop-filter: blur(12px);
+      user-select: text;
+    }
+
+    .letter-corner {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border-color: rgba(212, 184, 255, 0.55);
+      border-style: solid;
+      pointer-events: none;
+    }
+
+    .corner-tl { top: 14px; left: 14px; border-width: 1.5px 0 0 1.5px; border-top-left-radius: 7px; }
+    .corner-tr { top: 14px; right: 14px; border-width: 1.5px 1.5px 0 0; border-top-right-radius: 7px; }
+    .corner-bl { bottom: 14px; left: 14px; border-width: 0 0 1.5px 1.5px; border-bottom-left-radius: 7px; }
+    .corner-br { bottom: 14px; right: 14px; border-width: 0 1.5px 1.5px 0; border-bottom-right-radius: 7px; }
+
+    .letter-date {
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(212, 184, 255, 0.78);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .letter-heading {
+      font-family: "Great Vibes", cursive;
+      font-size: clamp(2.1rem, 4.5vw, 3rem);
+      color: var(--lavender-bright);
+      text-align: center;
+      margin-bottom: 18px;
+      text-shadow: 0 2px 16px rgba(196, 161, 255, 0.35);
+    }
+
+    .letter-divider {
+      width: 110px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--lavender-main), transparent);
+      margin: 0 auto 24px auto;
+    }
+
+    .letter-body {
+      font-family: "Cormorant Garamond", Georgia, serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+      font-size: clamp(1.12rem, 1.9vw, 1.32rem);
+      line-height: 1.78;
+      color: var(--text-main);
+      white-space: pre-line;
+      text-align: left;
+    }
+
+    .letter-signature {
+      margin-top: 28px;
+      text-align: right;
+      font-family: "Great Vibes", cursive, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+      font-size: clamp(1.85rem, 3.8vw, 2.4rem);
+      color: var(--lavender-bright);
+    }
+
+    @media (max-width: 600px) {
+      .envelope-btn {
+        width: 210px;
+        height: 138px;
+      }
+      .wax-seal {
+        top: 48px;
+        width: 38px;
+        height: 38px;
+      }
+      .envelope-label {
+        font-size: 1.15rem;
+        bottom: 16px;
+      }
+      .moon {
+        width: 52px;
+        height: 52px;
+        top: 5%;
+        right: 7%;
+      }
+      .letter-trigger-area {
+        margin-bottom: 14vh;
+      }
+      #page-letter {
+        padding: 72px 14px 36px 14px;
+      }
+      .letter-card {
+        width: 94vw;
+        padding: 28px 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Starry Sky & Fireflies -->
+  <canvas id="sky-canvas"></canvas>
+  <div class="moon"></div>
+
+  <!-- Falling Lilies, Sunflowers & Lavender Petals (Visible across BOTH pages) -->
+  <canvas id="falling-flowers-canvas"></canvas>
+
+  <!-- ===========================
+       PAGE 1: BLOOMING GARDEN
+       =========================== -->
+  <main id="page-garden" class="page active">
+    <div id="garden-stage" class="garden-stage" aria-hidden="true"></div>
+    <div class="garden-mist"></div>
+
+    <div class="letter-trigger-area">
+      <div class="garden-whisper" id="garden-whisper">A Lavender Garden For You</div>
+
+      <button
+        id="open-letter-btn"
+        class="envelope-btn"
+        type="button"
+        aria-label="Open Letter"
+      >
+        <div class="envelope-glow"></div>
+        <div class="envelope-body">
+          <div class="envelope-flap"></div>
+          <div class="wax-seal"></div>
+          <span class="envelope-label">Open Letter</span>
+        </div>
+      </button>
+
+      <div class="tap-hint">Tap the letter to read</div>
+    </div>
+  </main>
+
+  <!-- ===========================
+       PAGE 2: PERSONAL LETTER
+       =========================== -->
+  <section id="page-letter" class="page hidden" aria-hidden="true">
+    <button id="back-btn" class="back-btn" type="button">← Back to Garden</button>
+
+    <article class="letter-card">
+      <span class="letter-corner corner-tl"></span>
+      <span class="letter-corner corner-tr"></span>
+      <span class="letter-corner corner-bl"></span>
+      <span class="letter-corner corner-br"></span>
+
+      <div class="letter-date" id="letter-date"></div>
+      <h1 class="letter-heading" id="letter-heading"></h1>
+      <div class="letter-divider"></div>
+      <div class="letter-body" id="letter-body"></div>
+      <div class="letter-signature" id="letter-signature"></div>
+    </article>
+  </section>
+
+  <script>
+    const LETTER_CONFIG = {
+      gardenTitle: "A Lavender Garden For You",
+      dateLine: "Written With Love",
+      greeting: "My Dearest Wifey,",
+      message: `I lovee youu soo muchhh! 🥹❤️ I know apka past bahot hi acha nahi raha hai, par don't worry about it, baby. Jo past mein hua, bhul jaiye usko, aur hum new journey start krenge apni. Apna future best banayenge, bahot saari memories bnayenge, pyaar krenge, kisses denge, sab krenge hehe. 🫶🏻💗
+
+Par ek dusre ko kabhi chdh ke nahi jayenge, baby. Jitna bhi ladai krlena aap mere se, daant dena, but aana mere paas hi end mein. Aur mai hamesha apna ego side krke apna manaunga apko, sununga, aapko console krunga, jitne baar bhi karna pade, babyy. Kabhi peeche nai hatunga aur hath nai chdhaunga apka. 🥺❤️
+
+Myyy wifeyyyy, apke lows mein, highs mein, hamesha saath rhunga. Aur saath meinnn ek beautiful journey aur memories banayenge. Mwahhh, my sweethearttt! 💋🫂❤️✨`,
+      signature: "Forever Yours ♥"
+    };
+
+    document.getElementById("garden-whisper").textContent = LETTER_CONFIG.gardenTitle;
+    document.getElementById("letter-date").textContent = LETTER_CONFIG.dateLine;
+    document.getElementById("letter-heading").textContent = LETTER_CONFIG.greeting;
+    document.getElementById("letter-body").textContent = LETTER_CONFIG.message;
+    document.getElementById("letter-signature").textContent = LETTER_CONFIG.signature;
+
+    /* =====================================================================
+       1. STARRY LAVENDER NIGHT SKY & FIREFLIES
+       ===================================================================== */
+    const skyCanvas = document.getElementById("sky-canvas");
+    const skyCtx = skyCanvas.getContext("2d");
+    let stars = [];
+    let fireflies = [];
+
+    function resizeSky() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      skyCanvas.width = window.innerWidth * dpr;
+      skyCanvas.height = window.innerHeight * dpr;
+      skyCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const countStars = Math.floor((window.innerWidth * window.innerHeight) / 9500);
+      stars = Array.from({ length: countStars }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight * 0.82,
+        r: Math.random() * 1.4 + 0.3,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.018 + 0.006
+      }));
+
+      fireflies = Array.from({ length: 24 }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: window.innerHeight * (0.35 + Math.random() * 0.6),
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.22,
+        r: Math.random() * 2 + 1.2,
+        phase: Math.random() * Math.PI * 2
+      }));
+    }
+
+    function animateSky() {
+      skyCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      for (const s of stars) {
+        s.phase += s.speed;
+        const alpha = 0.25 + 0.65 * (0.5 + 0.5 * Math.sin(s.phase));
+        skyCtx.beginPath();
+        skyCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        skyCtx.fillStyle = `rgba(235, 222, 255, ${alpha})`;
+        skyCtx.fill();
+      }
+
+      for (const f of fireflies) {
+        f.x += f.vx;
+        f.y += f.vy;
+        f.phase += 0.032;
+
+        if (f.x < 0) f.x = window.innerWidth;
+        if (f.x > window.innerWidth) f.x = 0;
+        if (f.y < window.innerHeight * 0.2 || f.y > window.innerHeight) f.vy *= -1;
+
+        const glow = 0.22 + 0.65 * (0.5 + 0.5 * Math.sin(f.phase));
+        const grad = skyCtx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * 5);
+        grad.addColorStop(0, `rgba(220, 190, 255, ${glow})`);
+        grad.addColorStop(1, "rgba(220, 190, 255, 0)");
+        skyCtx.fillStyle = grad;
+        skyCtx.beginPath();
+        skyCtx.arc(f.x, f.y, f.r * 5, 0, Math.PI * 2);
+        skyCtx.fill();
+      }
+
+      requestAnimationFrame(animateSky);
+    }
+
+    /* =====================================================================
+       2. CLEAN LAVENDER-THEME GARDEN (ONLY LILIES & SUNFLOWERS, BOTH SIDES)
+       ===================================================================== */
+    const LILY_PALETTES = [
+      { outer: "#9b6be8", inner: "#cfaeff", edge: "#f2e7ff", spots: "#5a2ca0", anther: "#ffd97d" },
+      { outer: "#b892ff", inner: "#dfc7ff", edge: "#faf5ff", spots: "#7243bd", anther: "#ffe08a" },
+      { outer: "#d2beff", inner: "#efe5ff", edge: "#ffffff", spots: "#8b66c9", anther: "#f6c967" }
+    ];
+
+    const SUNFLOWER_PALETTES = [
+      { petal1: "#ffe074", petal2: "#f5b83d", center: "#2f1b38", ring: "#9a76a8" },
+      { petal1: "#ffd166", petal2: "#f0a932", center: "#261530", ring: "#866296" }
+    ];
+
+    function createLilySVG(palette, height) {
+      const uid = Math.random().toString(36).slice(2, 8);
+      const w = 130;
+      const headY = 48;
+      const stemBase = height;
+
+      let petals = "";
+      for (let i = 0; i < 6; i++) {
+        const angle = i * 60;
+        const isInner = i % 2 === 1;
+        const fill = isInner ? `url(#lily-in-${uid})` : `url(#lily-out-${uid})`;
+        const scale = isInner ? 1 : 0.94;
+        petals += `
+          <g transform="rotate(${angle}) scale(${scale})">
+            <path d="M0,0 C-14,-16 -18,-42 0,-56 C18,-42 14,-16 0,0 Z"
+                  fill="${fill}" stroke="${palette.edge}" stroke-width="0.85" stroke-opacity="0.7" />
+            <circle cx="-3" cy="-19" r="1.05" fill="${palette.spots}" opacity="0.68" />
+            <circle cx="3.5" cy="-22" r="1.15" fill="${palette.spots}" opacity="0.68" />
+            <circle cx="0" cy="-27" r="0.95" fill="${palette.spots}" opacity="0.58" />
+          </g>
+        `;
+      }
+
+      let stamens = "";
+      for (let i = 0; i < 6; i++) {
+        const a = (i * 60 + 30) * (Math.PI / 180);
+        const sx = Math.cos(a) * 19;
+        const sy = Math.sin(a) * 19;
+        stamens += `
+          <line x1="0" y1="0" x2="${sx.toFixed(1)}" y2="${sy.toFixed(1)}" stroke="#ede3ff" stroke-width="1.2" />
+          <ellipse cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" rx="3" ry="1.5"
+                   transform="rotate(${i * 60 + 30} ${sx.toFixed(1)} ${sy.toFixed(1)})" fill="${palette.anther}" />
+        `;
+      }
+
+      return `
+        <svg width="${w}" height="${height}" viewBox="0 0 ${w} ${height}">
+          <defs>
+            <linearGradient id="lily-out-${uid}" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="${palette.outer}" />
+              <stop offset="100%" stop-color="${palette.edge}" />
+            </linearGradient>
+            <linearGradient id="lily-in-${uid}" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="${palette.outer}" />
+              <stop offset="65%" stop-color="${palette.inner}" />
+              <stop offset="100%" stop-color="${palette.edge}" />
+            </linearGradient>
+          </defs>
+          <path class="stem-path" d="M65,${stemBase} Q62,${(stemBase + headY) / 2} 65,${headY}"
+                stroke="#315e57" stroke-width="4.2" fill="none" stroke-linecap="round" />
+          <g class="leaf-group">
+            <path d="M64,${stemBase - 35} Q34,${stemBase - 65} 28,${stemBase - 94} Q49,${stemBase - 74} 64,${stemBase - 50} Z" fill="#2c5750" />
+            <path d="M66,${stemBase - 55} Q94,${stemBase - 85} 100,${stemBase - 112} Q81,${stemBase - 93} 66,${stemBase - 70} Z" fill="#3e756b" />
+          </g>
+          <g transform="translate(65, ${headY})">
+            <g class="bloom-head">
+              ${petals}
+              ${stamens}
+              <circle cx="0" cy="0" r="3.4" fill="#f3ebff" />
+            </g>
+          </g>
+        </svg>
+      `;
+    }
+
+    function createSunflowerSVG(palette, height) {
+      const w = 140;
+      const headY = 62;
+      const stemBase = height;
+
+      let backPetals = "";
+      let frontPetals = "";
+      const count = 18;
+
+      for (let i = 0; i < count; i++) {
+        const deg = (360 / count) * i;
+        backPetals += `
+          <path d="M0,-16 C-5,-30 -4,-45 0,-52 C4,-45 5,-30 0,-16 Z"
+                fill="${palette.petal2}" transform="rotate(${deg + 10})" />
+        `;
+        frontPetals += `
+          <path d="M0,-15 C-5.5,-28 -4.5,-43 0,-50 C4.5,-43 5.5,-28 0,-15 Z"
+                fill="${palette.petal1}" transform="rotate(${deg})" />
+        `;
+      }
+
+      return `
+        <svg width="${w}" height="${height}" viewBox="0 0 ${w} ${height}">
+          <path class="stem-path" d="M70,${stemBase} Q67,${(stemBase + headY) / 2} 70,${headY}"
+                stroke="#2e5952" stroke-width="6" fill="none" stroke-linecap="round" />
+          <g class="leaf-group">
+            <path d="M68,${stemBase - 45} C42,${stemBase - 50} 26,${stemBase - 72} 34,${stemBase - 90} C50,${stemBase - 84} 60,${stemBase - 68} 68,${stemBase - 55} Z" fill="#2c5750" />
+            <path d="M72,${stemBase - 85} C98,${stemBase - 90} 114,${stemBase - 112} 106,${stemBase - 130} C90,${stemBase - 124} 80,${stemBase - 108} 72,${stemBase - 95} Z" fill="#3e756b" />
+          </g>
+          <g transform="translate(70, ${headY})">
+            <g class="bloom-head">
+              ${backPetals}
+              ${frontPetals}
+              <circle cx="0" cy="0" r="19" fill="${palette.center}" stroke="${palette.ring}" stroke-width="2.8" />
+              <circle cx="0" cy="0" r="12" fill="none" stroke="${palette.ring}" stroke-width="1.2" stroke-dasharray="2 3.5" />
+              <circle cx="0" cy="0" r="5.5" fill="none" stroke="${palette.petal2}" stroke-width="1" stroke-dasharray="1.5 2.5" opacity="0.65" />
+            </g>
+          </g>
+        </svg>
+      `;
+    }
+
+    function buildGarden() {
+      const stage = document.getElementById("garden-stage");
+      stage.innerHTML = "";
+
+      const isMobile = window.innerWidth < 640;
+
+      const gardenLayout = isMobile
+        ? [
+            { x: 2,  type: "sunflower", h: 255, scale: 0.84, delay: 0.1,  pal: 0, z: 2 },
+            { x: 14, type: "lily",      h: 205, scale: 0.84, delay: 0.35, pal: 0, z: 3 },
+            { x: 26, type: "lily",      h: 145, scale: 0.78, delay: 0.55, pal: 2, z: 4 },
+
+            { x: 74, type: "lily",      h: 145, scale: 0.78, delay: 0.55, pal: 1, z: 4 },
+            { x: 86, type: "lily",      h: 205, scale: 0.84, delay: 0.35, pal: 0, z: 3 },
+            { x: 96, type: "sunflower", h: 255, scale: 0.84, delay: 0.1,  pal: 1, z: 2 }
+          ]
+        : [
+            { x: 3,  type: "sunflower", h: 365, scale: 0.96, delay: 0.1,  pal: 0, z: 2 },
+            { x: 10, type: "lily",      h: 315, scale: 0.94, delay: 0.3,  pal: 0, z: 3 },
+            { x: 18, type: "sunflower", h: 255, scale: 0.88, delay: 0.45, pal: 1, z: 2 },
+            { x: 25, type: "lily",      h: 205, scale: 0.86, delay: 0.6,  pal: 2, z: 4 },
+
+            { x: 75, type: "lily",      h: 205, scale: 0.86, delay: 0.6,  pal: 1, z: 4 },
+            { x: 82, type: "sunflower", h: 255, scale: 0.88, delay: 0.45, pal: 0, z: 2 },
+            { x: 90, type: "lily",      h: 315, scale: 0.94, delay: 0.3,  pal: 0, z: 3 },
+            { x: 97, type: "sunflower", h: 365, scale: 0.96, delay: 0.1,  pal: 1, z: 2 }
+          ];
+
+      gardenLayout.forEach((item, idx) => {
+        const wrap = document.createElement("div");
+        wrap.className = "flower-wrap";
+        wrap.style.left = `calc(${item.x}% - 65px)`;
+        wrap.style.zIndex = item.z;
+        wrap.style.setProperty("--bloom-delay", `${item.delay}s`);
+        wrap.style.setProperty("--sway-dur", `${5.5 + (idx % 3) * 1.1}s`);
+        wrap.style.setProperty("--sway-delay", `${(idx % 4) * 0.45}s`);
+
+        const svg =
+          item.type === "lily"
+            ? createLilySVG(LILY_PALETTES[item.pal % LILY_PALETTES.length], item.h)
+            : createSunflowerSVG(SUNFLOWER_PALETTES[item.pal % SUNFLOWER_PALETTES.length], item.h);
+
+        wrap.innerHTML = svg;
+        wrap.style.transform = `scale(${item.scale})`;
+        stage.appendChild(wrap);
+      });
+    }
+
+    /* =====================================================================
+       3. PAGE TRANSITION (OPEN LETTER -> PAGE 2)
+       ===================================================================== */
+    const pageGarden = document.getElementById("page-garden");
+    const pageLetter = document.getElementById("page-letter");
+    const openLetterBtn = document.getElementById("open-letter-btn");
+    const backBtn = document.getElementById("back-btn");
+
+    openLetterBtn.addEventListener("click", () => {
+      openLetterBtn.classList.add("opening");
+      setTimeout(() => {
+        pageGarden.classList.remove("active");
+        pageGarden.classList.add("hidden");
+        pageGarden.setAttribute("aria-hidden", "true");
+
+        pageLetter.classList.remove("hidden");
+        pageLetter.classList.add("active");
+        pageLetter.setAttribute("aria-hidden", "false");
+        pageLetter.scrollTop = 0;
+      }, 460);
+    });
+
+    backBtn.addEventListener("click", () => {
+      openLetterBtn.classList.remove("opening");
+      pageLetter.classList.remove("active");
+      pageLetter.classList.add("hidden");
+      pageLetter.setAttribute("aria-hidden", "true");
+
+      pageGarden.classList.remove("hidden");
+      pageGarden.classList.add("active");
+      pageGarden.setAttribute("aria-hidden", "false");
+    });
+
+    /* =====================================================================
+       4. CONTINUOUS FALLING LILIES, SUNFLOWERS & LAVENDER PETALS (BOTH PAGES)
+       ===================================================================== */
+    const fallCanvas = document.getElementById("falling-flowers-canvas");
+    const fallCtx = fallCanvas.getContext("2d");
+    let fallingParticles = [];
+
+    function spawnFallingItem(startAbove = false) {
+      const types = ["lily", "sunflower", "petal", "petal", "petal"];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const lilyPal = LILY_PALETTES[Math.floor(Math.random() * LILY_PALETTES.length)];
+      const sunPal = SUNFLOWER_PALETTES[Math.floor(Math.random() * SUNFLOWER_PALETTES.length)];
+
+      return {
+        type,
+        x: Math.random() * window.innerWidth,
+        y: startAbove ? -40 - Math.random() * 140 : Math.random() * window.innerHeight,
+        size: type === "petal" ? 6 + Math.random() * 5.5 : 11 + Math.random() * 8.5,
+        vy: 0.65 + Math.random() * 0.95,
+        swayAmp: 0.35 + Math.random() * 0.75,
+        swayPhase: Math.random() * Math.PI * 2,
+        swaySpeed: 0.014 + Math.random() * 0.018,
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.02,
+        alpha: type === "petal" ? 0.5 + Math.random() * 0.32 : 0.7 + Math.random() * 0.25,
+        colorA: type === "sunflower" ? sunPal.petal1 : lilyPal.outer,
+        colorB: type === "sunflower" ? sunPal.center : lilyPal.edge
+      };
+    }
+
+    function initFallingParticles() {
+      const total = window.innerWidth < 600 ? 26 : 42;
+      fallingParticles = Array.from({ length: total }, () => spawnFallingItem(false));
+    }
+
+    function resizeAll() {
+      resizeSky();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      fallCanvas.width = window.innerWidth * dpr;
+      fallCanvas.height = window.innerHeight * dpr;
+      fallCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      buildGarden();
+      initFallingParticles();
+    }
+
+    window.addEventListener("resize", resizeAll);
+    resizeAll();
+    animateSky();
+
+    function drawFallingItem(p) {
+      fallCtx.save();
+      fallCtx.translate(p.x, p.y);
+      fallCtx.rotate(p.rot);
+      fallCtx.globalAlpha = p.alpha;
+
+      if (p.type === "petal") {
+        fallCtx.beginPath();
+        fallCtx.moveTo(0, -p.size);
+        fallCtx.quadraticCurveTo(p.size * 0.85, 0, 0, p.size);
+        fallCtx.quadraticCurveTo(-p.size * 0.85, 0, 0, -p.size);
+        fallCtx.fillStyle = p.colorA;
+        fallCtx.fill();
+      } else if (p.type === "lily") {
+        for (let i = 0; i < 6; i++) {
+          fallCtx.save();
+          fallCtx.rotate((i * Math.PI) / 3);
+          fallCtx.beginPath();
+          fallCtx.moveTo(0, 0);
+          fallCtx.quadraticCurveTo(-p.size * 0.32, -p.size * 0.55, 0, -p.size);
+          fallCtx.quadraticCurveTo(p.size * 0.32, -p.size * 0.55, 0, 0);
+          fallCtx.fillStyle = i % 2 === 0 ? p.colorA : p.colorB;
+          fallCtx.fill();
+          fallCtx.restore();
+        }
+        fallCtx.beginPath();
+        fallCtx.arc(0, 0, p.size * 0.14, 0, Math.PI * 2);
+        fallCtx.fillStyle = "#ffe08a";
+        fallCtx.fill();
+      } else if (p.type === "sunflower") {
+        const petals = 12;
+        fallCtx.fillStyle = p.colorA;
+        for (let i = 0; i < petals; i++) {
+          fallCtx.save();
+          fallCtx.rotate((i * Math.PI * 2) / petals);
+          fallCtx.beginPath();
+          fallCtx.ellipse(0, -p.size * 0.65, p.size * 0.18, p.size * 0.42, 0, 0, Math.PI * 2);
+          fallCtx.fill();
+          fallCtx.restore();
+        }
+        fallCtx.beginPath();
+        fallCtx.arc(0, 0, p.size * 0.38, 0, Math.PI * 2);
+        fallCtx.fillStyle = p.colorB;
+        fallCtx.fill();
+      }
+
+      fallCtx.restore();
+    }
+
+    function animateFallingFlowers() {
+      fallCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      for (let i = 0; i < fallingParticles.length; i++) {
+        const p = fallingParticles[i];
+        p.swayPhase += p.swaySpeed;
+        p.x += Math.sin(p.swayPhase) * p.swayAmp;
+        p.y += p.vy;
+        p.rot += p.rotSpeed;
+
+        drawFallingItem(p);
+
+        if (p.y > window.innerHeight + 50) {
+          fallingParticles[i] = spawnFallingItem(true);
+        }
+      }
+
+      requestAnimationFrame(animateFallingFlowers);
+    }
+
+    animateFallingFlowers();
+  </script>
+</body>
+</html>
