@@ -2,1496 +2,1055 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Happy Birthday, Avantika! ✨</title>
-
-  <!-- Google Fonts -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Letter For You ❤️</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
-  <!-- Confetti CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
     :root {
-      --bg-cream: #fbf7f4;
-      --pink-soft: #fde8ed;
-      --pink-blush: #f7cad4;
-      --lavender: #e9e4f5;
-      --lavender-deep: #bfa9dd;
-      --gold: #d4af37;
-      --text-main: #3d2c38;
-      --text-muted: #7d6b79;
-      --transition-smooth: all 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+      --bg-deep: #050811;
+      --bg-mid: #0c1224;
+      --bg-glow: #181c36;
+      --text-main: #f5efe6;
+      --text-soft: #d5cbbd;
+      --gold: #f0c975;
+      --gold-soft: rgba(240, 201, 117, 0.35);
+      --rose-seal: #b8324f;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      -webkit-tap-highlight-color: transparent;
     }
 
+    html,
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: linear-gradient(135deg, #fdf4f6 0%, #f7edf8 45%, #f4eefe 100%);
-      color: var(--text-main);
+      width: 100%;
+      height: 100%;
       overflow: hidden;
-      width: 100vw;
-      height: 100vh;
-      position: relative;
+      background: radial-gradient(circle at 50% 25%, var(--bg-glow) 0%, var(--bg-mid) 45%, var(--bg-deep) 100%);
+      color: var(--text-main);
+      font-family: "Cormorant Garamond", Georgia, serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+      user-select: none;
     }
 
-    /* Ambient & Particle Canvases */
-    #ambient-canvas, #shower-canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    #ambient-canvas { z-index: 1; }
-    
-    #shower-canvas { 
-      z-index: 15; 
-      opacity: 0; 
-      transition: opacity 1.2s ease; 
-      pointer-events: none;
-    }
-    #shower-canvas.active { opacity: 1; }
-
-    /* Fireworks Canvas on Slide 2 */
-    #fireworks-canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 2;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
-    #fireworks-canvas.active {
-      opacity: 1;
-    }
-
-    /* Top Bar */
-    .top-bar {
+    /* ===========================
+       SHARED NIGHT SKY BACKDROP
+       =========================== */
+    #sky-canvas {
       position: fixed;
-      top: 1.5rem;
-      left: 0;
-      right: 0;
-      z-index: 100;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 2rem;
-      pointer-events: none;
-    }
-
-    .progress-pill {
-      pointer-events: auto;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 8px 24px rgba(191, 169, 221, 0.2);
-      padding: 0.45rem 0.9rem;
-      border-radius: 999px;
-      display: flex;
-      gap: 0.6rem;
-      align-items: center;
-    }
-
-    .step-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--pink-blush);
-      transition: var(--transition-smooth);
-    }
-
-    .step-dot.active {
-      width: 24px;
-      border-radius: 8px;
-      background: linear-gradient(90deg, #e599b2, #bfa9dd);
-      box-shadow: 0 0 10px rgba(229, 153, 178, 0.5);
-    }
-
-    .music-btn {
-      pointer-events: auto;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 8px 24px rgba(191, 169, 221, 0.2);
-      padding: 0.55rem 1.1rem;
-      border-radius: 999px;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--text-main);
-      transition: transform 0.25s ease, background 0.25s ease;
-    }
-
-    .music-btn:hover {
-      transform: scale(1.04);
-      background: #ffffff;
-    }
-
-    .music-waves {
-      display: flex;
-      gap: 2px;
-      height: 12px;
-      align-items: center;
-    }
-
-    .music-waves span {
-      width: 2.5px;
-      background: #bfa9dd;
-      border-radius: 2px;
-      height: 3px;
-      transition: height 0.2s ease;
-    }
-
-    .music-waves.playing span {
-      animation: wave 1s infinite alternate ease-in-out;
-    }
-    .music-waves.playing span:nth-child(2) { animation-delay: 0.2s; }
-    .music-waves.playing span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes wave {
-      0% { height: 3px; }
-      100% { height: 14px; }
-    }
-
-    /* Slider Container */
-    .slider-wrapper {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      transition: transform 0.9s cubic-bezier(0.77, 0, 0.175, 1);
-      z-index: 3;
-    }
-
-    .slide {
-      flex: 0 0 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 5rem 1.5rem 2.5rem;
-      position: relative;
-      overflow-y: auto;
-      text-align: center;
-    }
-
-    /* Common Typography & Buttons */
-    h1.hero-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.5rem, 5.5vw, 4.6rem);
-      font-weight: 600;
-      color: #382434;
-      line-height: 1.15;
-      text-shadow: 0 4px 20px rgba(247, 202, 212, 0.5);
-      margin-bottom: 0.8rem;
-      position: relative;
-      z-index: 10;
-    }
-
-    h1.hero-title .name-gradient {
-      background: linear-gradient(45deg, #d8698b, #9370db, #d4af37);
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shimmer 5s ease infinite;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .hero-subtitle {
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      color: var(--text-muted);
-      max-width: 580px;
-      line-height: 1.6;
-      margin-bottom: 2rem;
-      font-weight: 300;
-      position: relative;
-      z-index: 10;
-    }
-
-    .luxury-btn {
-      position: relative;
-      background: linear-gradient(135deg, #f7b2c5, #c3b0df);
-      color: #ffffff;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 600;
-      padding: 0.95rem 2.2rem;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(216, 105, 139, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
-      transition: var(--transition-smooth);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      letter-spacing: 0.3px;
-      z-index: 25;
-    }
-
-    .luxury-btn:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 16px 36px rgba(216, 105, 139, 0.45);
-    }
-
-    .luxury-btn:active {
-      transform: translateY(0) scale(0.98);
-    }
-
-    .luxury-btn.gold {
-      background: linear-gradient(135deg, #e3c46e, #d4af37);
-      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.35);
-    }
-
-    /* SLIDE 1 */
-    .s1-card {
-      background: rgba(255, 255, 255, 0.65);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.85);
-      border-radius: 36px;
-      padding: 3.5rem 2.5rem;
-      max-width: 680px;
-      box-shadow: 0 25px 50px -12px rgba(189, 164, 219, 0.25);
-      animation: floatSlow 6s ease-in-out infinite;
-      position: relative;
-      z-index: 10;
-    }
-
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
-    }
-
-    .crown-badge {
-      display: inline-block;
-      font-size: 2.2rem;
-      margin-bottom: 0.5rem;
-      animation: pulseSparkle 2s ease-in-out infinite;
-    }
-
-    @keyframes pulseSparkle {
-      0%, 100% { transform: scale(1) rotate(0deg); }
-      50% { transform: scale(1.1) rotate(4deg); }
-    }
-
-    .balloon-wrapper {
-      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      top: 0;
-      left: 0;
+      z-index: 0;
       pointer-events: none;
-      overflow: hidden;
+    }
+
+    .moon {
+      position: fixed;
+      top: 7%;
+      right: 10%;
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff9e6 0%, #f3dfb0 60%, rgba(243, 223, 176, 0.15) 100%);
+      box-shadow: 0 0 45px rgba(255, 240, 195, 0.35), 0 0 110px rgba(255, 225, 160, 0.15);
+      opacity: 0.85;
       z-index: 1;
+      pointer-events: none;
+      transition: opacity 1s ease;
     }
 
-    .balloon {
-      position: absolute;
-      width: 48px;
-      height: 60px;
-      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-      opacity: 0.65;
-      animation: floatUpward 14s linear infinite;
-    }
-
-    .balloon::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 23px;
-      width: 2px;
-      height: 16px;
-      background: rgba(140, 120, 135, 0.35);
-    }
-
-    .balloon.b1 { left: 10%; background: #f9c2d1; animation-duration: 13s; }
-    .balloon.b2 { left: 82%; background: #dcd0f3; animation-duration: 15s; animation-delay: 2s; }
-    .balloon.b3 { left: 24%; background: #ffe4be; animation-duration: 18s; animation-delay: 4s; }
-    .balloon.b4 { left: 70%; background: #fbd0dc; animation-duration: 16s; animation-delay: 1s; }
-
-    @keyframes floatUpward {
-      0% { transform: translateY(110vh) rotate(0deg); }
-      100% { transform: translateY(-30vh) rotate(15deg); }
-    }
-
-    /* SLIDE 2: CAKE & FIREWORKS */
-    .slide-2-content {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    /* ===========================
+       PAGE MANAGEMENT
+       =========================== */
+    .page {
+      position: fixed;
+      inset: 0;
       width: 100%;
+      height: 100%;
+      transition: opacity 1s ease, transform 1s ease, visibility 1s ease;
     }
 
-    .cake-container {
-      position: relative;
-      width: 280px;
-      height: 250px;
-      margin: 1.5rem auto 1.2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      z-index: 10;
-    }
-
-    .plate {
-      width: 260px;
-      height: 18px;
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(180, 150, 170, 0.25);
-      z-index: 2;
-    }
-
-    .cake-tier {
-      position: relative;
-      border-radius: 16px 16px 6px 6px;
-      box-shadow: inset 0 -8px 0 rgba(0,0,0,0.06);
-    }
-
-    .cake-bottom {
-      width: 210px;
-      height: 75px;
-      background: linear-gradient(to right, #ffd8e2, #fbe3eb, #ffd8e2);
-      border-bottom: 5px solid #f6b4c6;
-      z-index: 3;
-    }
-
-    .cake-bottom::before, .cake-top::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 18px;
-      background: #ffffff;
-      border-radius: 14px 14px 12px 12px;
-      box-shadow: 0 3px 6px rgba(240, 180, 195, 0.35);
-    }
-
-    .cake-top {
-      width: 155px;
-      height: 65px;
-      background: linear-gradient(to right, #f2ddfc, #faeefa, #f2ddfc);
-      border-bottom: 5px solid #d9bcf1;
-      z-index: 4;
-      margin-bottom: -4px;
-    }
-
-    .candle {
-      position: relative;
-      width: 14px;
-      height: 48px;
-      background: repeating-linear-gradient(
-        45deg,
-        #fff9e6,
-        #fff9e6 6px,
-        #f797b4 6px,
-        #f797b4 12px
-      );
-      border-radius: 6px;
-      margin-bottom: -2px;
-      z-index: 5;
-    }
-
-    .wick {
-      position: absolute;
-      top: -9px;
-      left: 5px;
-      width: 3px;
-      height: 9px;
-      background: #503d42;
-      border-radius: 2px;
-    }
-
-    .flame {
-      position: absolute;
-      top: -24px;
-      left: -2px;
-      width: 18px;
-      height: 26px;
-      background: radial-gradient(ellipse at bottom, #fff7c2 20%, #ffae19 65%, rgba(255, 69, 0, 0.8) 100%);
-      border-radius: 50% 50% 20% 20% / 60% 60% 40% 40%;
-      box-shadow: 0 0 20px #ffae19, 0 0 40px #ff7700;
-      animation: flicker 1.1s infinite alternate ease-in-out;
-      transform-origin: bottom center;
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-
-    @keyframes flicker {
-      0% { transform: rotate(-2deg) scale(0.98); }
-      50% { transform: rotate(2deg) scale(1.05) skewX(2deg); }
-      100% { transform: rotate(-1deg) scale(1.01); }
-    }
-
-    .flame.extinguished {
-      opacity: 0 !important;
-      transform: scale(0.1) translateY(-10px) !important;
-      pointer-events: none;
-    }
-
-    .smoke {
-      position: absolute;
-      top: -20px;
-      left: 3px;
-      width: 8px;
-      height: 8px;
-      background: rgba(180, 180, 180, 0.55);
-      border-radius: 50%;
-      filter: blur(4px);
+    .page.hidden {
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
+      transform: scale(1.03);
     }
 
-    .smoke.active {
-      animation: smokeRise 2.4s forwards ease-out;
-    }
-
-    @keyframes smokeRise {
-      0% { opacity: 0.8; transform: translateY(0) scale(1); }
-      50% { opacity: 0.4; transform: translateY(-30px) translateX(8px) scale(2.2); }
-      100% { opacity: 0; transform: translateY(-65px) translateX(-12px) scale(3.5); }
-    }
-
-    .wish-instructions {
-      font-size: 1.05rem;
-      color: var(--text-muted);
-      max-width: 480px;
-      line-height: 1.6;
-      margin-bottom: 1.2rem;
-      z-index: 10;
-    }
-
-    .blow-controls {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      z-index: 25;
-    }
-
-    .mic-status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid rgba(214, 185, 230, 0.4);
-      padding: 0.4rem 0.9rem;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .mic-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #4cd964;
-      animation: micPulse 1.4s infinite;
-    }
-
-    @keyframes micPulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.4); opacity: 0.5; }
-    }
-
-    .fireworks-hint-pill {
-      display: none;
-      margin-bottom: 0.8rem;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 0.4rem 1.1rem;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #9d3d5f;
-      box-shadow: 0 4px 15px rgba(220, 150, 180, 0.3);
-      animation: pulseSparkle 2s infinite;
-    }
-
-    .wishes-success-message {
-      opacity: 0;
-      transform: translateY(15px);
-      transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      pointer-events: none;
-      margin-top: 1rem;
-      z-index: 25;
-    }
-
-    .wishes-success-message.revealed {
+    .page.active {
       opacity: 1;
-      transform: translateY(0);
+      visibility: visible;
       pointer-events: auto;
+      transform: scale(1);
     }
 
-    .wish-quote {
-      font-family: 'Dancing Script', cursive;
-      font-size: 2.2rem;
-      color: #b5476f;
-      margin-bottom: 0.8rem;
-      text-shadow: 0 2px 10px rgba(181, 71, 111, 0.2);
+    /* ===========================
+       PAGE 1: BLOOMING GARDEN
+       =========================== */
+    #page-garden {
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* SLIDE 3: LETTER & FOOTER */
-    .letter-stage {
-      position: relative;
+    .garden-mist {
+      position: absolute;
+      bottom: 0;
+      left: 0;
       width: 100%;
-      max-width: 680px;
-      margin: 0 auto;
-      perspective: 1200px;
+      height: 36vh;
+      background: linear-gradient(to top, rgba(4, 12, 10, 0.95) 0%, rgba(8, 22, 18, 0.45) 55%, transparent 100%);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .garden-stage {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .flower-wrap {
+      position: absolute;
+      bottom: -8px;
+      transform-origin: bottom center;
+      filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.6));
+      animation: sway var(--sway-dur, 6s) ease-in-out infinite alternate;
+      animation-delay: var(--sway-delay, 0s);
+    }
+
+    .flower-wrap svg {
+      display: block;
+      overflow: visible;
+    }
+
+    /* Bloom animations */
+    .stem-path {
+      transform-box: fill-box;
+      transform-origin: bottom center;
+      transform: scaleY(0);
+      animation: growStem 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: var(--bloom-delay, 0.2s);
+    }
+
+    .leaf-group {
+      transform-box: fill-box;
+      transform-origin: bottom center;
+      transform: scale(0);
+      opacity: 0;
+      animation: growLeaf 1.1s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+      animation-delay: calc(var(--bloom-delay, 0.2s) + 0.55s);
+    }
+
+    .bloom-head {
+      transform-box: fill-box;
+      transform-origin: center center;
+      transform: scale(0.02) rotate(-12deg);
+      opacity: 0;
+      animation: bloomOpen 1.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation-delay: calc(var(--bloom-delay, 0.2s) + 0.95s);
+    }
+
+    @keyframes growStem {
+      0% { transform: scaleY(0); }
+      100% { transform: scaleY(1); }
+    }
+
+    @keyframes growLeaf {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes bloomOpen {
+      0% { transform: scale(0.05) rotate(-14deg); opacity: 0; }
+      45% { opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    @keyframes sway {
+      0% { transform: rotate(-2.4deg); }
+      100% { transform: rotate(2.4deg); }
+    }
+
+    /* ===========================
+       CENTRAL ENVELOPE ("OPEN LETTER")
+       =========================== */
+    .letter-trigger-area {
+      position: relative;
+      z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      z-index: 20;
-      padding-bottom: 2rem;
+      gap: 18px;
+      margin-bottom: 12vh;
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      animation: revealLetter 1.4s ease forwards;
+      animation-delay: 1.8s;
     }
 
-    .envelope-box {
-      width: 320px;
-      height: 210px;
-      background: #f7d6de;
-      border-radius: 12px;
+    @keyframes revealLetter {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .garden-whisper {
+      font-family: "Great Vibes", cursive;
+      font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+      color: var(--gold);
+      text-shadow: 0 2px 18px rgba(240, 201, 117, 0.45);
+      letter-spacing: 0.03em;
+      text-align: center;
+      padding: 0 16px;
+    }
+
+    .envelope-btn {
       position: relative;
-      box-shadow: 0 20px 45px rgba(179, 137, 163, 0.3);
+      width: 240px;
+      height: 156px;
+      border: none;
+      background: transparent;
       cursor: pointer;
-      transition: transform 0.4s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      outline: none;
+      perspective: 900px;
+      animation: floatEnvelope 4s ease-in-out infinite;
+      transition: transform 0.35s ease;
     }
 
-    .envelope-box:hover {
-      transform: translateY(-4px);
+    .envelope-btn:hover,
+    .envelope-btn:focus-visible {
+      transform: scale(1.06) translateY(-4px);
+    }
+
+    @keyframes floatEnvelope {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-9px); }
+    }
+
+    .envelope-glow {
+      position: absolute;
+      inset: -18px;
+      border-radius: 22px;
+      background: radial-gradient(circle, rgba(240, 201, 117, 0.28) 0%, rgba(219, 112, 147, 0.14) 50%, transparent 75%);
+      filter: blur(12px);
+      z-index: -1;
+      transition: opacity 0.4s ease;
+    }
+
+    .envelope-btn:hover .envelope-glow {
+      opacity: 1.3;
+    }
+
+    .envelope-body {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #251f33 0%, #171324 100%);
+      border: 1.5px solid rgba(240, 201, 117, 0.55);
+      border-radius: 10px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65), inset 0 0 24px rgba(240, 201, 117, 0.08);
+      overflow: hidden;
+    }
+
+    .envelope-body::before,
+    .envelope-body::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .envelope-body::before {
+      background: linear-gradient(to top right, rgba(240, 201, 117, 0.12) 49.5%, transparent 50%),
+                  linear-gradient(to top left, rgba(240, 201, 117, 0.12) 49.5%, transparent 50%);
+      opacity: 0.45;
     }
 
     .envelope-flap {
       position: absolute;
       top: 0;
       left: 0;
-      width: 0;
-      height: 0;
-      border-left: 160px solid transparent;
-      border-right: 160px solid transparent;
-      border-top: 110px solid #f2c0cd;
+      width: 100%;
+      height: 88px;
+      background: linear-gradient(180deg, #2e2640 0%, #1c172b 100%);
+      clip-path: polygon(0 0, 50% 92%, 100% 0);
+      border-top: 1.5px solid rgba(240, 201, 117, 0.6);
       transform-origin: top center;
-      transition: transform 0.6s ease;
-      z-index: 5;
+      transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 3;
     }
 
-    .envelope-pocket {
+    .envelope-btn:hover .envelope-flap,
+    .envelope-btn.opening .envelope-flap {
+      transform: rotateX(165deg);
+    }
+
+    .envelope-label {
       position: absolute;
-      bottom: 0;
+      bottom: 20px;
       left: 0;
-      width: 0;
-      height: 0;
-      border-left: 160px solid #f9e2e8;
-      border-right: 160px solid #f9e2e8;
-      border-bottom: 105px solid #f4c8d4;
-      border-radius: 0 0 12px 12px;
-      z-index: 4;
+      width: 100%;
+      text-align: center;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+      z-index: 2;
     }
 
     .wax-seal {
       position: absolute;
-      top: 92px;
+      top: 56px;
+      left: 50%;
+      transform: translate(-50%, -50%);
       width: 44px;
       height: 44px;
-      background: radial-gradient(circle, #d4af37 0%, #aa841a 100%);
       border-radius: 50%;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.18);
-      z-index: 6;
+      background: radial-gradient(circle at 32% 32%, #e04d6d 0%, var(--rose-seal) 65%, #73182d 100%);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
-      font-size: 1.25rem;
-      border: 1px solid #ffd875;
+      z-index: 4;
+      transition: transform 0.45s ease, opacity 0.4s ease;
     }
 
-    .envelope-box.opened .envelope-flap {
-      transform: rotateX(180deg);
-      z-index: 1;
+    .wax-seal::after {
+      content: "♥";
+      color: #ffd7df;
+      font-size: 1.1rem;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     }
 
-    .envelope-box.opened .wax-seal {
-      opacity: 0;
+    .envelope-btn:hover .wax-seal,
+    .envelope-btn.opening .wax-seal {
+      transform: translate(-50%, -65%) scale(0.85);
+      opacity: 0.7;
+    }
+
+    .tap-hint {
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(245, 239, 230, 0.6);
+    }
+
+    /* ===========================
+       PAGE 2: LETTER & FALLING FLOWERS
+       =========================== */
+    #page-letter {
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    #falling-flowers-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 6;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 22px;
+      left: 22px;
+      z-index: 12;
+      background: rgba(18, 22, 42, 0.72);
+      color: var(--gold);
+      border: 1px solid rgba(240, 201, 117, 0.4);
+      border-radius: 999px;
+      padding: 9px 18px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(35, 40, 74, 0.9);
+      transform: translateX(-2px);
+    }
+
+    .letter-card {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 700px;
+      max-height: 82vh;
+      overflow-y: auto;
+      padding: clamp(32px, 5vw, 56px) clamp(24px, 5vw, 54px);
+      background: linear-gradient(160deg, rgba(19, 22, 40, 0.88) 0%, rgba(11, 14, 28, 0.92) 100%);
+      border: 1px solid rgba(240, 201, 117, 0.35);
+      border-radius: 18px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75), 0 0 45px rgba(240, 201, 117, 0.08);
+      backdrop-filter: blur(12px);
+      user-select: text;
+    }
+
+    .letter-card::-webkit-scrollbar {
+      width: 6px;
+    }
+    .letter-card::-webkit-scrollbar-thumb {
+      background: rgba(240, 201, 117, 0.3);
+      border-radius: 4px;
+    }
+
+    .letter-corner {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border-color: rgba(240, 201, 117, 0.55);
+      border-style: solid;
       pointer-events: none;
     }
 
-    .letter-paper {
-      position: relative;
-      width: 100%;
-      background: #fffdfa url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23e8dec9' fill-opacity='0.12' fill-rule='evenodd'/%3E%3C/svg%3E");
-      border-radius: 24px;
-      padding: 3.2rem 2.5rem 2.5rem;
-      box-shadow: 0 25px 65px rgba(150, 120, 140, 0.22), 0 0 0 1px rgba(230, 215, 205, 0.5);
-      text-align: left;
-      display: none;
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-      backdrop-filter: blur(8px);
+    .corner-tl { top: 14px; left: 14px; border-width: 1.5px 0 0 1.5px; border-top-left-radius: 6px; }
+    .corner-tr { top: 14px; right: 14px; border-width: 1.5px 1.5px 0 0; border-top-right-radius: 6px; }
+    .corner-bl { bottom: 14px; left: 14px; border-width: 0 0 1.5px 1.5px; border-bottom-left-radius: 6px; }
+    .corner-br { bottom: 14px; right: 14px; border-width: 0 1.5px 1.5px 0; border-bottom-right-radius: 6px; }
+
+    .letter-date {
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(240, 201, 117, 0.75);
+      text-align: center;
+      margin-bottom: 10px;
     }
 
-    .letter-paper.visible {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
+    .letter-heading {
+      font-family: "Great Vibes", cursive;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 24px;
+      text-shadow: 0 2px 15px rgba(240, 201, 117, 0.25);
     }
 
-    .letter-header {
-      font-family: 'Dancing Script', cursive;
-      font-size: 2.3rem;
-      color: #9d3d5f;
-      margin-bottom: 1.5rem;
+    .letter-divider {
+      width: 90px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      margin: 0 auto 28px auto;
     }
 
     .letter-body {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.25rem;
-      line-height: 1.8;
-      color: #3b2a36;
+      font-family: "Cormorant Garamond", Georgia, serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+      font-size: clamp(1.18rem, 2.3vw, 1.38rem);
+      line-height: 1.85;
+      color: var(--text-main);
       white-space: pre-line;
-      min-height: 200px;
+      text-align: left;
     }
 
-    .cursor {
-      display: inline-block;
-      width: 2px;
-      height: 1.25em;
-      background-color: #b5476f;
-      vertical-align: text-bottom;
-      animation: blink 0.8s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-
-    /* Special Footer for Avantika */
-    .special-avantika-footer {
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px dashed rgba(200, 160, 180, 0.4);
-      text-align: center;
-      font-family: 'Dancing Script', cursive;
-      font-size: 1.55rem;
-      color: #9d3d5f;
-      letter-spacing: 0.5px;
-      display: none;
-      animation: fadeIn 1s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .replay-container {
-      margin-top: 2rem;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-
-    .replay-container.show {
-      opacity: 1;
-      transform: translateY(0);
+    .letter-signature {
+      margin-top: 34px;
+      text-align: right;
+      font-family: "Great Vibes", cursive, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+      font-size: clamp(1.9rem, 4vw, 2.5rem);
+      color: var(--gold);
     }
 
     @media (max-width: 600px) {
-      .top-bar { padding: 0 1rem; top: 1rem; }
-      .s1-card { padding: 2.5rem 1.4rem; border-radius: 28px; }
-      .letter-paper { padding: 2.2rem 1.4rem; }
-      .letter-body { font-size: 1.12rem; line-height: 1.65; }
-      .cake-container { transform: scale(0.85); margin: 0.5rem auto 1rem; }
-      .special-avantika-footer { font-size: 1.35rem; }
+      .envelope-btn {
+        width: 210px;
+        height: 138px;
+      }
+      .wax-seal {
+        top: 48px;
+        width: 38px;
+        height: 38px;
+      }
+      .envelope-label {
+        font-size: 1.15rem;
+        bottom: 16px;
+      }
+      .moon {
+        width: 54px;
+        height: 54px;
+        top: 5%;
+        right: 7%;
+      }
+      .letter-trigger-area {
+        margin-bottom: 18vh;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Ambient Sparkles Background -->
-  <canvas id="ambient-canvas"></canvas>
+  <!-- Starry Sky & Fireflies Canvas -->
+  <canvas id="sky-canvas"></canvas>
+  <div class="moon"></div>
 
-  <!-- Interactive Fireworks Canvas for Slide 2 -->
-  <canvas id="fireworks-canvas"></canvas>
+  <!-- ===========================
+       PAGE 1: BLOOMING GARDEN
+       =========================== -->
+  <main id="page-garden" class="page active">
+    <div id="garden-stage" class="garden-stage" aria-hidden="true"></div>
+    <div class="garden-mist"></div>
 
-  <!-- Flower & Heart Shower Canvas for Slide 3 -->
-  <canvas id="shower-canvas"></canvas>
+    <div class="letter-trigger-area">
+      <div class="garden-whisper" id="garden-whisper">A Midnight Garden For You</div>
 
-  <!-- Navigation & Music -->
-  <header class="top-bar">
-    <div class="progress-pill">
-      <span class="step-dot active" id="dot-0"></span>
-      <span class="step-dot" id="dot-1"></span>
-      <span class="step-dot" id="dot-2"></span>
-    </div>
-
-    <button class="music-btn" id="musicToggleBtn" aria-label="Toggle Music">
-      <div class="music-waves" id="musicWaves">
-        <span></span><span></span><span></span>
-      </div>
-      <span id="musicBtnLabel">Play Music 🎵</span>
-    </button>
-  </header>
-
-  <!-- Slider Wrapper -->
-  <main class="slider-wrapper" id="sliderWrapper">
-
-    <!-- SLIDE 1: WELCOME -->
-    <section class="slide" id="slide-1">
-      <div class="balloon-wrapper">
-        <div class="balloon b1"></div>
-        <div class="balloon b2"></div>
-        <div class="balloon b3"></div>
-        <div class="balloon b4"></div>
-      </div>
-
-      <div class="s1-card">
-        <div class="crown-badge">✨ 🌸 ✨</div>
-        <h1 class="hero-title">Happy Birthday,<br /><span class="name-gradient">Avantika!</span></h1>
-        <p class="hero-subtitle">
-          "Today is all about you. I've got something special waiting for you..."
-        </p>
-        <button class="luxury-btn" id="startSurpriseBtn">
-          Open Your Surprise ✨
-        </button>
-      </div>
-    </section>
-
-    <!-- SLIDE 2: CAKE, CANDLE & INTERACTIVE FIREWORKS -->
-    <section class="slide" id="slide-2">
-      <div class="slide-2-content">
-        <h1 class="hero-title" style="font-size: clamp(2.2rem, 5vw, 3.6rem); margin-bottom: 0.3rem;">
-          Make a Wish, Avantika! 🎂
-        </h1>
-        <p class="wish-instructions" id="wishInstructions">
-          Close your eyes, make a wish, and blow out your candle!
-        </p>
-
-        <div class="fireworks-hint-pill" id="fireworksHint">
-          🎆 Click anywhere to shoot fireworks! 🎆
-        </div>
-
-        <div class="cake-container">
-          <div class="candle">
-            <div class="flame" id="candleFlame"></div>
-            <div class="smoke" id="candleSmoke"></div>
-            <div class="wick"></div>
-          </div>
-          <div class="cake-tier cake-top"></div>
-          <div class="cake-tier cake-bottom"></div>
-          <div class="plate"></div>
-        </div>
-
-        <div class="blow-controls" id="blowControls">
-          <div class="mic-status-pill" id="micPill" style="display: none;">
-            <span class="mic-dot"></span>
-            <span>Mic listening... Blow on your screen! 💨</span>
-          </div>
-          <button class="luxury-btn gold" id="manualBlowBtn">
-            Blow the Candles 🕯️
-          </button>
-        </div>
-
-        <div class="wishes-success-message" id="wishSuccessBlock">
-          <div class="wish-quote">"May all your wishes come true! 💗"</div>
-          <button class="luxury-btn" id="toSlide3Btn">
-            One Last Surprise 💌
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE 3: LETTER & FLOWER SHOWER -->
-    <section class="slide" id="slide-3">
-      <div class="letter-stage">
-        <div class="envelope-box" id="envelopeBox">
+      <button
+        id="open-letter-btn"
+        class="envelope-btn"
+        type="button"
+        aria-label="Open Letter"
+      >
+        <div class="envelope-glow"></div>
+        <div class="envelope-body">
           <div class="envelope-flap"></div>
-          <div class="envelope-pocket"></div>
-          <div class="wax-seal">💌</div>
+          <div class="wax-seal"></div>
+          <span class="envelope-label">Open Letter</span>
         </div>
+      </button>
 
-        <button class="luxury-btn" id="openEnvelopeBtn" style="margin-top: 2rem;">
-          Open Your Letter
-        </button>
-
-        <article class="letter-paper" id="letterPaper">
-          <div class="letter-header">Dear Avantika,</div>
-          <div class="letter-body" id="typewriterBody"></div>
-          
-          <!-- Made with love especially for Avantika -->
-          <div class="special-avantika-footer" id="specialFooter">
-            made with love ❤️ especially for avantika..
-          </div>
-
-          <div class="replay-container" id="replayContainer">
-            <button class="luxury-btn" id="replayBtn" style="background: linear-gradient(135deg, #d8a0be, #a891c9);">
-              Relive the Surprise 🔄
-            </button>
-          </div>
-        </article>
-      </div>
-    </section>
-
+      <div class="tap-hint">Tap the letter to read</div>
+    </div>
   </main>
 
+  <!-- ===========================
+       PAGE 2: PERSONAL LETTER
+       =========================== -->
+  <section id="page-letter" class="page hidden" aria-hidden="true">
+    <canvas id="falling-flowers-canvas"></canvas>
+
+    <button id="back-btn" class="back-btn" type="button">← Back to Garden</button>
+
+    <article class="letter-card">
+      <span class="letter-corner corner-tl"></span>
+      <span class="letter-corner corner-tr"></span>
+      <span class="letter-corner corner-bl"></span>
+      <span class="letter-corner corner-br"></span>
+
+      <div class="letter-date" id="letter-date"></div>
+      <h1 class="letter-heading" id="letter-heading"></h1>
+      <div class="letter-divider"></div>
+      <div class="letter-body" id="letter-body"></div>
+      <div class="letter-signature" id="letter-signature"></div>
+    </article>
+  </section>
+
   <script>
-    /* ==========================================================
-       1. AMBIENT PARTICLES (Slide 1)
-       ========================================================== */
-    const canvas = document.getElementById('ambient-canvas');
-    const ctx = canvas.getContext('2d');
-    let width, height;
-    let particles = [];
+    const LETTER_CONFIG = {
+      gardenTitle: "A Midnight Garden For You",
+      dateLine: "Written With Love",
+      greeting: "My Dearest Wifey,",
+      message: `I lovee youu soo muchhh! 🥹❤️ I know apka past bahot hi acha nahi raha hai, par don't worry about it, baby. Jo past mein hua, bhul jaiye usko, aur hum new journey start krenge apni. Apna future best banayenge, bahot saari memories bnayenge, pyaar krenge, kisses denge, sab krenge hehe. 🫶🏻💗
 
-    function resizeCanvases() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      showerCanvas.width = window.innerWidth;
-      showerCanvas.height = window.innerHeight;
-      fwCanvas.width = window.innerWidth;
-      fwCanvas.height = window.innerHeight;
+Par ek dusre ko kabhi chdh ke nahi jayenge, baby. Jitna bhi ladai krlena aap mere se, daant dena, but aana mere paas hi end mein. Aur mai hamesha apna ego side krke apna manaunga apko, sununga, aapko console krunga, jitne baar bhi karna pade, babyy. Kabhi peeche nai hatunga aur hath nai chdhaunga apka. 🥺❤️
+
+Myyy wifeyyyy, apke lows mein, highs mein, hamesha saath rhunga. Aur saath meinnn ek beautiful journey aur memories banayenge. Mwahhh, my sweethearttt! 💋🫂❤️✨`,
+      signature: "Forever Yours ♥"
+    };
+
+    // Apply letter content to the page
+    document.getElementById("garden-whisper").textContent = LETTER_CONFIG.gardenTitle;
+    document.getElementById("letter-date").textContent = LETTER_CONFIG.dateLine;
+    document.getElementById("letter-heading").textContent = LETTER_CONFIG.greeting;
+    document.getElementById("letter-body").textContent = LETTER_CONFIG.message;
+    document.getElementById("letter-signature").textContent = LETTER_CONFIG.signature;
+
+    /* =====================================================================
+       1. STARRY NIGHT & FIREFLIES BACKGROUND
+       ===================================================================== */
+    const skyCanvas = document.getElementById("sky-canvas");
+    const skyCtx = skyCanvas.getContext("2d");
+    let stars = [];
+    let fireflies = [];
+
+    function resizeSky() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      skyCanvas.width = window.innerWidth * dpr;
+      skyCanvas.height = window.innerHeight * dpr;
+      skyCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const countStars = Math.floor((window.innerWidth * window.innerHeight) / 9500);
+      stars = Array.from({ length: countStars }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight * 0.78,
+        r: Math.random() * 1.4 + 0.3,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.02 + 0.008
+      }));
+
+      fireflies = Array.from({ length: 28 }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: window.innerHeight * (0.4 + Math.random() * 0.58),
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.25,
+        r: Math.random() * 2.2 + 1.2,
+        phase: Math.random() * Math.PI * 2
+      }));
     }
 
-    class AmbientParticle {
-      constructor() {
-        this.reset();
+    function animateSky() {
+      skyCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      for (const s of stars) {
+        s.phase += s.speed;
+        const alpha = 0.25 + 0.65 * (0.5 + 0.5 * Math.sin(s.phase));
+        skyCtx.beginPath();
+        skyCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        skyCtx.fillStyle = `rgba(255, 248, 225, ${alpha})`;
+        skyCtx.fill();
       }
-      reset() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height + height * 0.1;
-        this.size = Math.random() * 9 + 4;
-        this.speedY = -(Math.random() * 0.6 + 0.3);
-        this.speedX = Math.sin(Math.random() * Math.PI) * 0.4;
-        this.opacity = Math.random() * 0.5 + 0.2;
-        this.type = Math.random() > 0.45 ? 'heart' : 'sparkle';
-        this.color = Math.random() > 0.5 ? '255, 182, 193' : '209, 196, 233';
-        this.rotation = Math.random() * Math.PI * 2;
-        this.rotSpeed = (Math.random() - 0.5) * 0.02;
+
+      for (const f of fireflies) {
+        f.x += f.vx;
+        f.y += f.vy;
+        f.phase += 0.035;
+
+        if (f.x < 0) f.x = window.innerWidth;
+        if (f.x > window.innerWidth) f.x = 0;
+        if (f.y < window.innerHeight * 0.25 || f.y > window.innerHeight) f.vy *= -1;
+
+        const glow = 0.25 + 0.7 * (0.5 + 0.5 * Math.sin(f.phase));
+        const grad = skyCtx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * 5);
+        grad.addColorStop(0, `rgba(255, 232, 130, ${glow})`);
+        grad.addColorStop(1, "rgba(255, 232, 130, 0)");
+        skyCtx.fillStyle = grad;
+        skyCtx.beginPath();
+        skyCtx.arc(f.x, f.y, f.r * 5, 0, Math.PI * 2);
+        skyCtx.fill();
       }
-      update() {
-        this.y += this.speedY;
-        this.x += this.speedX + Math.sin(this.y * 0.01) * 0.3;
-        this.rotation += this.rotSpeed;
-        if (this.y < -30) {
-          this.reset();
-          this.y = height + 20;
-        }
-      }
-      draw() {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.rotation);
-        ctx.fillStyle = `rgba(${this.color}, ${this.opacity})`;
-        
-        if (this.type === 'heart') {
-          ctx.beginPath();
-          const d = this.size * 0.6;
-          ctx.moveTo(0, d / 4);
-          ctx.quadraticCurveTo(0, -d, -d, -d);
-          ctx.quadraticCurveTo(-2 * d, -d, -2 * d, d / 2);
-          ctx.quadraticCurveTo(-2 * d, 1.8 * d, 0, 2.5 * d);
-          ctx.quadraticCurveTo(2 * d, 1.8 * d, 2 * d, d / 2);
-          ctx.quadraticCurveTo(2 * d, -d, d, -d);
-          ctx.quadraticCurveTo(0, -d, 0, d / 4);
-          ctx.fill();
-        } else {
-          ctx.beginPath();
-          const s = this.size * 0.8;
-          ctx.moveTo(0, -s);
-          ctx.quadraticCurveTo(0, 0, s, 0);
-          ctx.quadraticCurveTo(0, 0, 0, s);
-          ctx.quadraticCurveTo(0, 0, -s, 0);
-          ctx.quadraticCurveTo(0, 0, 0, -s);
-          ctx.fill();
-        }
-        ctx.restore();
-      }
+
+      requestAnimationFrame(animateSky);
     }
 
-    for (let i = 0; i < 35; i++) {
-      particles.push(new AmbientParticle());
-    }
+    resizeSky();
+    animateSky();
+    window.addEventListener("resize", resizeSky);
 
-    function animateAmbient() {
-      ctx.clearRect(0, 0, width, height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
-      requestAnimationFrame(animateAmbient);
-    }
-    animateAmbient();
-
-    /* ==========================================================
-       2. INTERACTIVE FIREWORKS ENGINE (Slide 2)
-       ========================================================== */
-    const fwCanvas = document.getElementById('fireworks-canvas');
-    const fwCtx = fwCanvas.getContext('2d');
-    const fireworks = [];
-    const fwParticles = [];
-    let fireworksEnabled = false;
-
-    function calculateDistance(pt1x, pt1y, pt2x, pt2y) {
-      return Math.sqrt(Math.pow(pt1x - pt2x, 2) + Math.pow(pt1y - pt2y, 2));
-    }
-    function randomRange(min, minMax) {
-      return Math.random() * (minMax - min) + min;
-    }
-
-    class Firework {
-      constructor(startX, startY, targetX, targetY) {
-        this.x = startX;
-        this.y = startY;
-        this.startX = startX;
-        this.startY = startY;
-        this.targetX = targetX;
-        this.targetY = targetY;
-        this.distanceToTarget = calculateDistance(startX, startY, targetX, targetY);
-        this.distanceTraveled = 0;
-        this.coordinates = [];
-        this.coordinateCount = 3;
-        while (this.coordinateCount--) {
-          this.coordinates.push([this.x, this.y]);
-        }
-        this.angle = Math.atan2(targetY - startY, targetX - startX);
-        this.speed = 2;
-        this.acceleration = 1.05;
-        this.brightness = randomRange(50, 70);
-        this.hue = randomRange(0, 360);
-      }
-      update(index) {
-        this.coordinates.pop();
-        this.coordinates.unshift([this.x, this.y]);
-        this.speed *= this.acceleration;
-        let vx = Math.cos(this.angle) * this.speed;
-        let vy = Math.sin(this.angle) * this.speed;
-        this.distanceTraveled = calculateDistance(this.startX, this.startY, this.x + vx, this.y + vy);
-        if (this.distanceTraveled >= this.distanceToTarget) {
-          createFireworkParticles(this.targetX, this.targetY, this.hue);
-          fireworks.splice(index, 1);
-        } else {
-          this.x += vx;
-          this.y += vy;
-        }
-      }
-      draw() {
-        fwCtx.beginPath();
-        fwCtx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
-        fwCtx.lineTo(this.x, this.y);
-        fwCtx.strokeStyle = `hsl(${this.hue}, 100%, ${this.brightness}%)`;
-        fwCtx.lineWidth = 2.5;
-        fwCtx.stroke();
-      }
-    }
-
-    class Particle {
-      constructor(x, y, hue) {
-        this.x = x;
-        this.y = y;
-        this.hue = hue + randomRange(-20, 20);
-        this.coordinates = [];
-        this.coordinateCount = 5;
-        while (this.coordinateCount--) {
-          this.coordinates.push([this.x, this.y]);
-        }
-        this.angle = randomRange(0, Math.PI * 2);
-        this.speed = randomRange(1, 10);
-        this.friction = 0.95;
-        this.gravity = 0.98;
-        this.decay = randomRange(0.015, 0.03);
-        this.alpha = 1;
-      }
-      update(index) {
-        this.coordinates.pop();
-        this.coordinates.unshift([this.x, this.y]);
-        this.speed *= this.friction;
-        this.x += Math.cos(this.angle) * this.speed;
-        this.y += Math.sin(this.angle) * this.speed + this.gravity;
-        this.alpha -= this.decay;
-        if (this.alpha <= this.decay) {
-          fwParticles.splice(index, 1);
-        }
-      }
-      draw() {
-        fwCtx.beginPath();
-        fwCtx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
-        fwCtx.lineTo(this.x, this.y);
-        fwCtx.strokeStyle = `hsla(${this.hue}, 100%, 50%, ${this.alpha})`;
-        fwCtx.lineWidth = 2;
-        fwCtx.stroke();
-      }
-    }
-
-    function createFireworkParticles(x, y, hue) {
-      let count = 80;
-      while (count--) {
-        fwParticles.push(new Particle(x, y, hue));
-      }
-    }
-
-    function fireworksLoop() {
-      requestAnimationFrame(fireworksLoop);
-      if (!fireworksEnabled && fireworks.length === 0 && fwParticles.length === 0) {
-        fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
-        return;
-      }
-
-      fwCtx.globalCompositeOperation = 'destination-out';
-      fwCtx.fillStyle = 'rgba(0, 0, 0, 0.25)';
-      fwCtx.fillRect(0, 0, fwCanvas.width, fwCanvas.height);
-      fwCtx.globalCompositeOperation = 'lighter';
-
-      let i = fireworks.length;
-      while (i--) {
-        fireworks[i].draw();
-        fireworks[i].update(i);
-      }
-      let j = fwParticles.length;
-      while (j--) {
-        fwParticles[j].draw();
-        fwParticles[j].update(j);
-      }
-
-      if (fireworksEnabled && randomRange(0, 100) < 4) {
-        const startX = fwCanvas.width / 2 + randomRange(-150, 150);
-        const startY = fwCanvas.height;
-        const targetX = randomRange(60, fwCanvas.width - 60);
-        const targetY = randomRange(60, fwCanvas.height * 0.5);
-        fireworks.push(new Firework(startX, startY, targetX, targetY));
-      }
-    }
-    fireworksLoop();
-
-    // Tap/Click anywhere on Slide 2 to launch fireworks
-    const slide2 = document.getElementById('slide-2');
-    slide2.addEventListener('pointerdown', (e) => {
-      if (currentSlide !== 1) return;
-      if (e.target.closest('button')) return;
-
-      const rect = fwCanvas.getBoundingClientRect();
-      const targetX = e.clientX - rect.left;
-      const targetY = e.clientY - rect.top;
-      const startX = fwCanvas.width / 2 + randomRange(-80, 80);
-      const startY = fwCanvas.height;
-      fireworks.push(new Firework(startX, startY, targetX, targetY));
-    });
-
-    /* ==========================================================
-       3. FLOWER & HEART SHOWER (Slide 3)
-       ========================================================== */
-    const showerCanvas = document.getElementById('shower-canvas');
-    const sCtx = showerCanvas.getContext('2d');
-    let showerItems = [];
-    let showerActive = false;
-    const showerSymbols = ['🌸', '🌺', '🌷', '🌹', '💖', '💕', '💗', '✨'];
-
-    class ShowerDrop {
-      constructor(initialScatter = false) {
-        this.reset(initialScatter);
-      }
-      reset(initialScatter = false) {
-        this.x = Math.random() * width;
-        this.y = initialScatter ? Math.random() * height : -(Math.random() * 80 + 30);
-        this.symbol = showerSymbols[Math.floor(Math.random() * showerSymbols.length)];
-        this.size = Math.random() * 18 + 18;
-        this.speedY = Math.random() * 1.8 + 1.2;
-        this.speedX = Math.random() * 1.2 - 0.6;
-        this.wobbleSpeed = Math.random() * 0.03 + 0.015;
-        this.wobbleAmp = Math.random() * 1.8 + 0.8;
-        this.wobble = Math.random() * Math.PI * 2;
-        this.rotation = Math.random() * Math.PI * 2;
-        this.rotSpeed = (Math.random() - 0.5) * 0.04;
-        this.opacity = Math.random() * 0.45 + 0.55;
-      }
-      update() {
-        this.y += this.speedY;
-        this.wobble += this.wobbleSpeed;
-        this.x += this.speedX + Math.sin(this.wobble) * this.wobbleAmp;
-        this.rotation += this.rotSpeed;
-
-        if (this.y > height + 40) {
-          this.reset();
-        }
-      }
-      draw() {
-        sCtx.save();
-        sCtx.translate(this.x, this.y);
-        sCtx.rotate(this.rotation);
-        sCtx.globalAlpha = this.opacity;
-        sCtx.font = `${this.size}px sans-serif`;
-        sCtx.textAlign = 'center';
-        sCtx.textBaseline = 'middle';
-        sCtx.fillText(this.symbol, 0, 0);
-        sCtx.restore();
-      }
-    }
-
-    function initShower() {
-      showerItems = [];
-      for (let i = 0; i < 48; i++) {
-        showerItems.push(new ShowerDrop(true));
-      }
-    }
-
-    function animateShower() {
-      if (showerActive) {
-        sCtx.clearRect(0, 0, width, height);
-        showerItems.forEach(drop => {
-          drop.update();
-          drop.draw();
-        });
-      }
-      requestAnimationFrame(animateShower);
-    }
-    initShower();
-    animateShower();
-
-    window.addEventListener('resize', resizeCanvases);
-    resizeCanvases();
-
-    function startShower() {
-      showerActive = true;
-      showerCanvas.classList.add('active');
-    }
-
-    function stopShower() {
-      showerActive = false;
-      showerCanvas.classList.remove('active');
-    }
-
-    /* ==========================================================
-       4. PROCEDURAL MUSIC BOX
-       ========================================================== */
-    let audioCtx = null;
-    let isPlaying = false;
-    let musicInterval = null;
-
-    const melodyNotes = [
-      329.63, 392.00, 440.00, 493.88, 523.25, 493.88, 440.00, 392.00,
-      349.23, 440.00, 523.25, 587.33, 523.25, 440.00, 392.00, 329.63
+    /* =====================================================================
+       2. MULTI-COLOR SVG GARDEN BUILDER (LILIES, TULIPS & SUNFLOWERS)
+       ===================================================================== */
+    const LILY_PALETTES = [
+      { outer: "#ff5c93", inner: "#ff9ec0", edge: "#ffe8f0", spots: "#8c0b3a", anther: "#ffb703" },
+      { outer: "#e8ecf2", inner: "#ffffff", edge: "#f5ffde", spots: "#a9c779", anther: "#f4a261" },
+      { outer: "#ff7e47", inner: "#ffb570", edge: "#ffe7c7", spots: "#9c2b00", anther: "#ffbe0b" },
+      { outer: "#b57edc", inner: "#e0bfff", edge: "#f7ebff", spots: "#561f7a", anther: "#ffd166" }
     ];
-    let noteIndex = 0;
 
-    function playMusicBoxNote(freq) {
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
+    const TULIP_PALETTES = [
+      { main: "#e63946", side: "#b5172b", highlight: "#ff758f" },
+      { main: "#ff85a1", side: "#e05780", highlight: "#ffc2d1" },
+      { main: "#9d4edd", side: "#6a1b9a", highlight: "#d7a9ff" },
+      { main: "#ff9f1c", side: "#e76f51", highlight: "#ffcf70" },
+      { main: "#ffd166", side: "#f4a261", highlight: "#fff1a8" }
+    ];
 
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    const SUNFLOWER_PALETTES = [
+      { petal1: "#ffd60a", petal2: "#fca311", center: "#3b2110", ring: "#8a5a2b" },
+      { petal1: "#ffb703", petal2: "#fb8500", center: "#2f180b", ring: "#b06a29" },
+      { petal1: "#ffe169", petal2: "#edc531", center: "#422414", ring: "#9c6d36" }
+    ];
 
-      gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.8);
+    function createLilySVG(palette, height) {
+      const uid = Math.random().toString(36).slice(2, 8);
+      const w = 130;
+      const headY = 48;
+      const stemBase = height;
 
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      let petals = "";
+      for (let i = 0; i < 6; i++) {
+        const angle = i * 60;
+        const isInner = i % 2 === 1;
+        const fill = isInner ? `url(#lily-in-${uid})` : `url(#lily-out-${uid})`;
+        const scale = isInner ? 1 : 0.94;
+        petals += `
+          <g transform="rotate(${angle}) scale(${scale})">
+            <path d="M0,0 C-14,-16 -18,-42 0,-56 C18,-42 14,-16 0,0 Z"
+                  fill="${fill}" stroke="${palette.edge}" stroke-width="0.9" stroke-opacity="0.7" />
+            <circle cx="-3" cy="-19" r="1.1" fill="${palette.spots}" opacity="0.75" />
+            <circle cx="3.5" cy="-22" r="1.2" fill="${palette.spots}" opacity="0.75" />
+            <circle cx="0" cy="-27" r="1" fill="${palette.spots}" opacity="0.65" />
+          </g>
+        `;
+      }
 
-      osc.start();
-      osc.stop(audioCtx.currentTime + 1.8);
+      let stamens = "";
+      for (let i = 0; i < 6; i++) {
+        const a = (i * 60 + 30) * (Math.PI / 180);
+        const sx = Math.cos(a) * 20;
+        const sy = Math.sin(a) * 20;
+        stamens += `
+          <line x1="0" y1="0" x2="${sx.toFixed(1)}" y2="${sy.toFixed(1)}" stroke="#e9f5c9" stroke-width="1.2" />
+          <ellipse cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" rx="3.2" ry="1.6"
+                   transform="rotate(${i * 60 + 30} ${sx.toFixed(1)} ${sy.toFixed(1)})" fill="${palette.anther}" />
+        `;
+      }
+
+      return `
+        <svg width="${w}" height="${height}" viewBox="0 0 ${w} ${height}">
+          <defs>
+            <linearGradient id="lily-out-${uid}" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="${palette.outer}" />
+              <stop offset="100%" stop-color="${palette.edge}" />
+            </linearGradient>
+            <linearGradient id="lily-in-${uid}" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="${palette.outer}" />
+              <stop offset="65%" stop-color="${palette.inner}" />
+              <stop offset="100%" stop-color="${palette.edge}" />
+            </linearGradient>
+          </defs>
+          <path class="stem-path" d="M65,${stemBase} Q61,${(stemBase + headY) / 2} 65,${headY}"
+                stroke="#2d6a4f" stroke-width="4.5" fill="none" stroke-linecap="round" />
+          <g class="leaf-group">
+            <path d="M64,${stemBase - 35} Q32,${stemBase - 65} 26,${stemBase - 95} Q48,${stemBase - 75} 64,${stemBase - 50} Z" fill="#2d6a4f" />
+            <path d="M66,${stemBase - 55} Q96,${stemBase - 85} 102,${stemBase - 115} Q82,${stemBase - 95} 66,${stemBase - 70} Z" fill="#40916c" />
+          </g>
+          <g transform="translate(65, ${headY})">
+            <g class="bloom-head">
+              ${petals}
+              ${stamens}
+              <circle cx="0" cy="0" r="3.5" fill="#d8f3dc" />
+            </g>
+          </g>
+        </svg>
+      `;
     }
 
-    function toggleMusic() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+    function createTulipSVG(palette, height) {
+      const uid = Math.random().toString(36).slice(2, 8);
+      const w = 100;
+      const headY = 58;
+      const stemBase = height;
 
-      const waves = document.getElementById('musicWaves');
-      const label = document.getElementById('musicBtnLabel');
-
-      if (!isPlaying) {
-        isPlaying = true;
-        waves.classList.add('playing');
-        label.textContent = "Music On 💗";
-        musicInterval = setInterval(() => {
-          playMusicBoxNote(melodyNotes[noteIndex]);
-          noteIndex = (noteIndex + 1) % melodyNotes.length;
-        }, 550);
-      } else {
-        isPlaying = false;
-        waves.classList.remove('playing');
-        label.textContent = "Music Muted 🔇";
-        clearInterval(musicInterval);
-      }
+      return `
+        <svg width="${w}" height="${height}" viewBox="0 0 ${w} ${height}">
+          <defs>
+            <linearGradient id="tulip-m-${uid}" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stop-color="${palette.side}" />
+              <stop offset="55%" stop-color="${palette.main}" />
+              <stop offset="100%" stop-color="${palette.highlight}" />
+            </linearGradient>
+          </defs>
+          <path class="stem-path" d="M50,${stemBase} Q54,${(stemBase + headY) / 2} 50,${headY}"
+                stroke="#2d6a4f" stroke-width="5" fill="none" stroke-linecap="round" />
+          <g class="leaf-group">
+            <path d="M50,${stemBase - 12} C26,${stemBase - 45} 18,${stemBase - 105} 30,${stemBase - 135} C34,${stemBase - 95} 40,${stemBase - 55} 50,${stemBase - 25} Z" fill="#2d6a4f" />
+            <path d="M50,${stemBase - 18} C74,${stemBase - 50} 82,${stemBase - 100} 70,${stemBase - 128} C66,${stemBase - 92} 60,${stemBase - 58} 50,${stemBase - 30} Z" fill="#40916c" />
+          </g>
+          <g transform="translate(50, ${headY})">
+            <g class="bloom-head">
+              <path d="M0,4 C-18,-6 -16,-40 0,-52 C16,-40 18,-6 0,4 Z" fill="${palette.highlight}" />
+              <path d="M-2,6 C-26,0 -28,-34 -12,-46 C-4,-32 -2,-12 -2,6 Z" fill="url(#tulip-m-${uid})" />
+              <path d="M2,6 C26,0 28,-34 12,-46 C4,-32 2,-12 2,6 Z" fill="url(#tulip-m-${uid})" />
+              <path d="M0,7 C-16,4 -14,-28 0,-42 C14,-28 16,4 0,7 Z" fill="url(#tulip-m-${uid})" opacity="0.92" />
+            </g>
+          </g>
+        </svg>
+      `;
     }
-    document.getElementById('musicToggleBtn').addEventListener('click', toggleMusic);
 
-    /* ==========================================================
-       5. SLIDE NAVIGATION
-       ========================================================== */
-    let currentSlide = 0;
-    const sliderWrapper = document.getElementById('sliderWrapper');
+    function createSunflowerSVG(palette, height) {
+      const w = 140;
+      const headY = 62;
+      const stemBase = height;
 
-    function goToSlide(slideIdx) {
-      currentSlide = slideIdx;
-      sliderWrapper.style.transform = `translateX(-${slideIdx * 100}vw)`;
-      
-      for (let i = 0; i < 3; i++) {
-        const dot = document.getElementById(`dot-${i}`);
-        if (i === slideIdx) {
-          dot.classList.add('active');
+      let backPetals = "";
+      let frontPetals = "";
+      const count = 18;
+
+      for (let i = 0; i < count; i++) {
+        const deg = (360 / count) * i;
+        backPetals += `
+          <path d="M0,-16 C-5,-30 -4,-45 0,-52 C4,-45 5,-30 0,-16 Z"
+                fill="${palette.petal2}" transform="rotate(${deg + 10})" />
+        `;
+        frontPetals += `
+          <path d="M0,-15 C-5.5,-28 -4.5,-43 0,-50 C4.5,-43 5.5,-28 0,-15 Z"
+                fill="${palette.petal1}" transform="rotate(${deg})" />
+        `;
+      }
+
+      return `
+        <svg width="${w}" height="${height}" viewBox="0 0 ${w} ${height}">
+          <path class="stem-path" d="M70,${stemBase} Q66,${(stemBase + headY) / 2} 70,${headY}"
+                stroke="#2b6147" stroke-width="6.5" fill="none" stroke-linecap="round" />
+          <g class="leaf-group">
+            <path d="M68,${stemBase - 45} C42,${stemBase - 50} 26,${stemBase - 72} 34,${stemBase - 90} C50,${stemBase - 84} 60,${stemBase - 68} 68,${stemBase - 55} Z" fill="#2d6a4f" />
+            <path d="M72,${stemBase - 85} C98,${stemBase - 90} 114,${stemBase - 112} 106,${stemBase - 130} C90,${stemBase - 124} 80,${stemBase - 108} 72,${stemBase - 95} Z" fill="#40916c" />
+          </g>
+          <g transform="translate(70, ${headY})">
+            <g class="bloom-head">
+              ${backPetals}
+              ${frontPetals}
+              <circle cx="0" cy="0" r="20" fill="${palette.center}" stroke="${palette.ring}" stroke-width="3" />
+              <circle cx="0" cy="0" r="13" fill="none" stroke="${palette.ring}" stroke-width="1.2" stroke-dasharray="2 3.5" />
+              <circle cx="0" cy="0" r="6" fill="none" stroke="${palette.petal2}" stroke-width="1" stroke-dasharray="1.5 2.5" opacity="0.7" />
+            </g>
+          </g>
+        </svg>
+      `;
+    }
+
+    function buildGarden() {
+      const stage = document.getElementById("garden-stage");
+      stage.innerHTML = "";
+
+      const width = window.innerWidth;
+      const isMobile = width < 640;
+
+      const gardenLayout = [
+        { x: 2,  type: "sunflower", h: isMobile ? 250 : 350, scale: 0.95, delay: 0.1,  pal: 0, z: 2 },
+        { x: 9,  type: "lily",      h: isMobile ? 220 : 300, scale: 0.92, delay: 0.35, pal: 0, z: 3 },
+        { x: 16, type: "tulip",     h: isMobile ? 190 : 250, scale: 0.9,  delay: 0.25, pal: 2, z: 4 },
+        { x: 22, type: "lily",      h: isMobile ? 235 : 320, scale: 0.9,  delay: 0.5,  pal: 1, z: 2 },
+        { x: 29, type: "tulip",     h: isMobile ? 165 : 225, scale: 0.88, delay: 0.65, pal: 0, z: 4 },
+
+        { x: 37, type: "tulip",     h: isMobile ? 130 : 175, scale: 0.85, delay: 0.75, pal: 4, z: 3 },
+        { x: 46, type: "lily",      h: isMobile ? 135 : 185, scale: 0.82, delay: 0.85, pal: 3, z: 4 },
+        { x: 55, type: "tulip",     h: isMobile ? 130 : 175, scale: 0.85, delay: 0.8,  pal: 1, z: 3 },
+
+        { x: 64, type: "tulip",     h: isMobile ? 175 : 235, scale: 0.9,  delay: 0.6,  pal: 3, z: 4 },
+        { x: 71, type: "sunflower", h: isMobile ? 245 : 345, scale: 0.95, delay: 0.3,  pal: 1, z: 2 },
+        { x: 79, type: "lily",      h: isMobile ? 225 : 305, scale: 0.92, delay: 0.45, pal: 2, z: 3 },
+        { x: 86, type: "tulip",     h: isMobile ? 195 : 265, scale: 0.95, delay: 0.2,  pal: 0, z: 4 },
+        { x: 92, type: "sunflower", h: isMobile ? 235 : 320, scale: 0.88, delay: 0.55, pal: 2, z: 2 }
+      ];
+
+      gardenLayout.forEach((item, idx) => {
+        const wrap = document.createElement("div");
+        wrap.className = "flower-wrap";
+        wrap.style.left = `calc(${item.x}% - 45px)`;
+        wrap.style.zIndex = item.z;
+        wrap.style.setProperty("--bloom-delay", `${item.delay}s`);
+        wrap.style.setProperty("--sway-dur", `${5 + (idx % 4) * 0.9}s`);
+        wrap.style.setProperty("--sway-delay", `${(idx % 5) * 0.4}s`);
+
+        let svg = "";
+        if (item.type === "lily") {
+          svg = createLilySVG(LILY_PALETTES[item.pal % LILY_PALETTES.length], item.h);
+        } else if (item.type === "tulip") {
+          svg = createTulipSVG(TULIP_PALETTES[item.pal % TULIP_PALETTES.length], item.h);
         } else {
-          dot.classList.remove('active');
+          svg = createSunflowerSVG(SUNFLOWER_PALETTES[item.pal % SUNFLOWER_PALETTES.length], item.h);
         }
-      }
 
-      if (slideIdx === 1) {
-        stopShower();
-        initSlide2();
-      } else if (slideIdx === 2) {
-        fireworksEnabled = false;
-        fwCanvas.classList.remove('active');
-        startShower();
-      } else {
-        fireworksEnabled = false;
-        fwCanvas.classList.remove('active');
-        stopShower();
-      }
-    }
-
-    document.getElementById('startSurpriseBtn').addEventListener('click', () => {
-      if (!isPlaying) toggleMusic();
-      goToSlide(1);
-    });
-
-    document.getElementById('toSlide3Btn').addEventListener('click', () => {
-      goToSlide(2);
-    });
-
-    /* ==========================================================
-       6. SLIDE 2: CANDLE, BLOW DETECTION & FIREWORKS
-       ========================================================== */
-    let candleBlown = false;
-    let micStream = null;
-
-    function initSlide2() {
-      const instructions = document.getElementById('wishInstructions');
-      let countdown = 3;
-      instructions.innerHTML = `Get ready to make a wish... <strong>${countdown}</strong>`;
-
-      const cdInterval = setInterval(() => {
-        countdown--;
-        if (countdown > 0) {
-          instructions.innerHTML = `Get ready to make a wish... <strong>${countdown}</strong>`;
-        } else {
-          clearInterval(cdInterval);
-          instructions.textContent = "Close your eyes, make a wish, and blow out your candle!";
-          tryEnableMicrophone();
-        }
-      }, 900);
-    }
-
-    async function tryEnableMicrophone() {
-      if (candleBlown || micStream) return;
-      try {
-        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const micPill = document.getElementById('micPill');
-        micPill.style.display = 'inline-flex';
-
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const analyser = audioContext.createAnalyser();
-        analyser.fftSize = 256;
-        const source = audioContext.createMediaStreamSource(micStream);
-        source.connect(analyser);
-
-        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-        function detectBlow() {
-          if (candleBlown) return;
-          analyser.getByteFrequencyData(dataArray);
-
-          let sum = 0;
-          for (let i = 0; i < dataArray.length; i++) {
-            sum += dataArray[i];
-          }
-          let average = sum / dataArray.length;
-
-          if (average > 42) {
-            extinguishCandle();
-            return;
-          }
-          requestAnimationFrame(detectBlow);
-        }
-        detectBlow();
-      } catch (err) {
-        console.log("Microphone access declined, manual fallback active.");
-      }
-    }
-
-    function extinguishCandle() {
-      if (candleBlown) return;
-      candleBlown = true;
-
-      const flame = document.getElementById('candleFlame');
-      const smoke = document.getElementById('candleSmoke');
-      flame.classList.add('extinguished');
-      smoke.classList.add('active');
-
-      if (micStream) {
-        micStream.getTracks().forEach(track => track.stop());
-      }
-      document.getElementById('blowControls').style.display = 'none';
-
-      // Activate Fireworks Engine
-      fireworksEnabled = true;
-      fwCanvas.classList.add('active');
-      document.getElementById('fireworksHint').style.display = 'inline-block';
-
-      // Launch an initial burst of fireworks
-      for (let i = 0; i < 4; i++) {
-        setTimeout(() => {
-          const startX = fwCanvas.width / 2 + randomRange(-120, 120);
-          const startY = fwCanvas.height;
-          const targetX = randomRange(80, fwCanvas.width - 80);
-          const targetY = randomRange(80, fwCanvas.height * 0.45);
-          fireworks.push(new Firework(startX, startY, targetX, targetY));
-        }, i * 350);
-      }
-
-      confetti({
-        particleCount: 100,
-        spread: 90,
-        origin: { y: 0.62 },
-        colors: ['#f7cad4', '#bfa9dd', '#d4af37', '#ffffff']
+        wrap.innerHTML = svg;
+        wrap.style.transform = `scale(${item.scale})`;
+        stage.appendChild(wrap);
       });
-
-      setTimeout(() => {
-        document.getElementById('wishSuccessBlock').classList.add('revealed');
-      }, 700);
     }
 
-    document.getElementById('manualBlowBtn').addEventListener('click', extinguishCandle);
+    buildGarden();
 
-    /* ==========================================================
-       7. SLIDE 3: AVANTIKA'S LETTER & FOOTER
-       ========================================================== */
-    const avantikaLetter = 
-`Honestly, mujhe nahi pata ki main aapko words mein kaise explain karun ki aap meri life mein kitni important hain. 🥹 Kabhi kabhi kuch log life mein aate hain aur bina kuch special kiye hi apni ek alag jagah bana lete hain, and I think aap mere liye unhi logon mein se ek hain. Aapki presence, aapse baat karna, random si conversations, hasi mazaak aur woh chhoti chhoti baatein jo shayad aapke liye normal hongi, mere liye kaafi meaningful hain. Aap un logon mein se hain jinke saath baat karke genuinely achha feel hota hai. I don't think you realise how much your presence can make someone's day better. ❤️
+    /* =====================================================================
+       3. PAGE TRANSITION (OPEN LETTER -> PAGE 2)
+       ===================================================================== */
+    const pageGarden = document.getElementById("page-garden");
+    const pageLetter = document.getElementById("page-letter");
+    const openLetterBtn = document.getElementById("open-letter-btn");
+    const backBtn = document.getElementById("back-btn");
 
-And honestly, aap genuinely bahut amazing person hain. 🫶🏻 Aapka nature, aapki personality, aapka baat karne ka tareeka aur jis tarah aap apni individuality maintain karti hain, woh sab bahut achha lagta hai. Aapki apni ek alag vibe hai jo aapko baaki logon se different banati hai. I really appreciate the person you are. Aapki har baat perfect ho ya na ho, nobody is perfect, but that's what makes you human and real. Aap jaisi hain, waise hi kaafi achhi hain, and I hope aap kabhi khud ko kisi aur se compare na karein. 🌷
+    let fallingActive = false;
+    let fallingAnimId = null;
 
-I also want you to know ki aapki friendship mere liye sirf timepass ya normal conversations tak limited nahi hai. I genuinely value having you in my life. 💗 Har friendship mein roz baat hona ya har waqt available rehna zaroori nahi hota. Kabhi busy schedules honge, kabhi baat nahi hogi, kabhi conversations kam ho jayengi, but that doesn't mean kisi ki importance kam ho jaati hai. Mere liye aapki jagah unhi special friendships mein se hai jahan distance ya silence se value change nahi hoti.
+    openLetterBtn.addEventListener("click", () => {
+      openLetterBtn.classList.add("opening");
+      setTimeout(() => {
+        pageGarden.classList.remove("active");
+        pageGarden.classList.add("hidden");
+        pageGarden.setAttribute("aria-hidden", "true");
 
-Aapki happiness genuinely matter karti hai. ✨ Main chahta hoon ki aap life mein jo bhi achieve karna chahti hain, woh sab achieve karein. Aapko woh saari opportunities milen jo aap deserve karti hain, aap apne dreams complete karein aur khud par hamesha proud feel karein. Aur jab kabhi aapko lage ki things aren't going your way, toh please khud par doubt mat kariyega. Aapke andar bahut achhi qualities hain, and I hope aap unhe khud bhi utni hi importance dein jitni woh deserve karti hain. 🌸
+        pageLetter.classList.remove("hidden");
+        pageLetter.classList.add("active");
+        pageLetter.setAttribute("aria-hidden", "false");
 
-One more thing, aapko kabhi mere saamne pretend karne ki zarurat nahi hai ki everything is okay. You can be yourself, share random thoughts, talk nonsense, complain about your day or simply have a normal conversation. I appreciate the real version of you, not some perfect version that you think people want to see. I hope meri friendship bhi aapke liye ek aisi space ho jahan aap comfortable feel karein and where you never have to think twice before being yourself. 🫂
+        startFallingFlowers();
+      }, 480);
+    });
 
-Lastly, thank you for being the person you are. ❤️ Thank you for all the conversations, laughs, little moments and memories. Shayad main har baar express nahi kar pata, but I genuinely appreciate you and your existence in my life. I don't want you to ever underestimate how amazing you are or how much you matter as a person. Aapki life mein bahut saari khushiyan aayein, aap humesha smile karein aur aapko aise log milen jo aapki genuinely respect aur care karein. And I hope humari friendship bhi aise hi bani rahe, naturally, without any expectations or pressure. You're genuinely a wonderful person, and I'm really glad that I got to know you. 🥹💗🧿`;
+    backBtn.addEventListener("click", () => {
+      openLetterBtn.classList.remove("opening");
+      pageLetter.classList.remove("active");
+      pageLetter.classList.add("hidden");
+      pageLetter.setAttribute("aria-hidden", "true");
 
-    let typingTimeout = null;
+      pageGarden.classList.remove("hidden");
+      pageGarden.classList.add("active");
+      pageGarden.setAttribute("aria-hidden", "false");
 
-    function openEnvelope() {
-      const envelope = document.getElementById('envelopeBox');
-      const openBtn = document.getElementById('openEnvelopeBtn');
-      const paper = document.getElementById('letterPaper');
+      stopFallingFlowers();
+    });
 
-      envelope.classList.add('opened');
-      openBtn.style.display = 'none';
+    /* =====================================================================
+       4. FALLING FLOWERS ON PAGE 2 (LILIES, TULIPS, SUNFLOWERS & PETALS)
+       ===================================================================== */
+    const fallCanvas = document.getElementById("falling-flowers-canvas");
+    const fallCtx = fallCanvas.getContext("2d");
+    let fallingParticles = [];
 
-      // Burst of flowers & hearts on open!
-      for (let i = 0; i < 28; i++) {
-        showerItems.push(new ShowerDrop(false));
+    function resizeFallCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      fallCanvas.width = window.innerWidth * dpr;
+      fallCanvas.height = window.innerHeight * dpr;
+      fallCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    window.addEventListener("resize", () => {
+      resizeFallCanvas();
+      buildGarden();
+    });
+    resizeFallCanvas();
+
+    function spawnFallingItem(startAbove = false) {
+      const types = ["lily", "tulip", "sunflower", "petal", "petal"];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const lilyPal = LILY_PALETTES[Math.floor(Math.random() * LILY_PALETTES.length)];
+      const tulipPal = TULIP_PALETTES[Math.floor(Math.random() * TULIP_PALETTES.length)];
+      const sunPal = SUNFLOWER_PALETTES[Math.floor(Math.random() * SUNFLOWER_PALETTES.length)];
+
+      return {
+        type,
+        x: Math.random() * window.innerWidth,
+        y: startAbove ? -40 - Math.random() * 140 : Math.random() * window.innerHeight,
+        size: type === "petal" ? 7 + Math.random() * 6 : 12 + Math.random() * 10,
+        vy: 0.75 + Math.random() * 1.15,
+        swayAmp: 0.4 + Math.random() * 0.9,
+        swayPhase: Math.random() * Math.PI * 2,
+        swaySpeed: 0.015 + Math.random() * 0.02,
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.025,
+        alpha: 0.7 + Math.random() * 0.3,
+        colorA: type === "lily" ? lilyPal.outer : type === "tulip" ? tulipPal.main : sunPal.petal1,
+        colorB: type === "lily" ? lilyPal.edge : type === "tulip" ? tulipPal.highlight : sunPal.center
+      };
+    }
+
+    function drawFallingItem(p) {
+      fallCtx.save();
+      fallCtx.translate(p.x, p.y);
+      fallCtx.rotate(p.rot);
+      fallCtx.globalAlpha = p.alpha;
+
+      if (p.type === "petal") {
+        fallCtx.beginPath();
+        fallCtx.moveTo(0, -p.size);
+        fallCtx.quadraticCurveTo(p.size * 0.9, 0, 0, p.size);
+        fallCtx.quadraticCurveTo(-p.size * 0.9, 0, 0, -p.size);
+        fallCtx.fillStyle = p.colorA;
+        fallCtx.fill();
+      } else if (p.type === "lily") {
+        for (let i = 0; i < 6; i++) {
+          fallCtx.save();
+          fallCtx.rotate((i * Math.PI) / 3);
+          fallCtx.beginPath();
+          fallCtx.moveTo(0, 0);
+          fallCtx.quadraticCurveTo(-p.size * 0.32, -p.size * 0.55, 0, -p.size);
+          fallCtx.quadraticCurveTo(p.size * 0.32, -p.size * 0.55, 0, 0);
+          fallCtx.fillStyle = i % 2 === 0 ? p.colorA : p.colorB;
+          fallCtx.fill();
+          fallCtx.restore();
+        }
+        fallCtx.beginPath();
+        fallCtx.arc(0, 0, p.size * 0.14, 0, Math.PI * 2);
+        fallCtx.fillStyle = "#ffd166";
+        fallCtx.fill();
+      } else if (p.type === "tulip") {
+        const s = p.size * 0.85;
+        fallCtx.fillStyle = p.colorB;
+        fallCtx.beginPath();
+        fallCtx.ellipse(0, -s * 0.2, s * 0.45, s * 0.75, 0, 0, Math.PI * 2);
+        fallCtx.fill();
+
+        fallCtx.fillStyle = p.colorA;
+        fallCtx.beginPath();
+        fallCtx.moveTo(0, s * 0.55);
+        fallCtx.quadraticCurveTo(-s * 0.8, s * 0.1, -s * 0.4, -s * 0.75);
+        fallCtx.quadraticCurveTo(0, -s * 0.3, 0, s * 0.55);
+        fallCtx.fill();
+
+        fallCtx.beginPath();
+        fallCtx.moveTo(0, s * 0.55);
+        fallCtx.quadraticCurveTo(s * 0.8, s * 0.1, s * 0.4, -s * 0.75);
+        fallCtx.quadraticCurveTo(0, -s * 0.3, 0, s * 0.55);
+        fallCtx.fill();
+      } else if (p.type === "sunflower") {
+        const petals = 12;
+        fallCtx.fillStyle = p.colorA;
+        for (let i = 0; i < petals; i++) {
+          fallCtx.save();
+          fallCtx.rotate((i * Math.PI * 2) / petals);
+          fallCtx.beginPath();
+          fallCtx.ellipse(0, -p.size * 0.65, p.size * 0.18, p.size * 0.42, 0, 0, Math.PI * 2);
+          fallCtx.fill();
+          fallCtx.restore();
+        }
+        fallCtx.beginPath();
+        fallCtx.arc(0, 0, p.size * 0.38, 0, Math.PI * 2);
+        fallCtx.fillStyle = p.colorB;
+        fallCtx.fill();
       }
 
-      setTimeout(() => {
-        envelope.style.display = 'none';
-        paper.classList.add('visible');
-        startTypewriter();
-      }, 750);
+      fallCtx.restore();
     }
 
-    function startTypewriter() {
-      const target = document.getElementById('typewriterBody');
-      target.innerHTML = '<span class="cursor"></span>';
-      let i = 0;
+    function animateFallingFlowers() {
+      if (!fallingActive) return;
 
-      function typeChar() {
-        if (i < avantikaLetter.length) {
-          const char = avantikaLetter.charAt(i);
-          target.innerHTML = avantikaLetter.substring(0, i + 1) + '<span class="cursor"></span>';
-          i++;
-          const delay = char === '\n' ? 220 : 18;
-          typingTimeout = setTimeout(typeChar, delay);
-        } else {
-          target.innerHTML = avantikaLetter;
-          document.getElementById('specialFooter').style.display = 'block';
-          document.getElementById('replayContainer').classList.add('show');
-          
-          confetti({
-            particleCount: 90,
-            spread: 80,
-            origin: { y: 0.65 },
-            colors: ['#f7cad4', '#bfa9dd', '#d4af37', '#ff6b8b']
-          });
+      fallCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      for (let i = 0; i < fallingParticles.length; i++) {
+        const p = fallingParticles[i];
+        p.swayPhase += p.swaySpeed;
+        p.x += Math.sin(p.swayPhase) * p.swayAmp;
+        p.y += p.vy;
+        p.rot += p.rotSpeed;
+
+        drawFallingItem(p);
+
+        if (p.y > window.innerHeight + 50) {
+          fallingParticles[i] = spawnFallingItem(true);
         }
       }
-      typeChar();
+
+      fallingAnimId = requestAnimationFrame(animateFallingFlowers);
     }
 
-    document.getElementById('envelopeBox').addEventListener('click', openEnvelope);
-    document.getElementById('openEnvelopeBtn').addEventListener('click', openEnvelope);
+    function startFallingFlowers() {
+      if (fallingActive) return;
+      fallingActive = true;
+      const total = window.innerWidth < 600 ? 28 : 44;
+      fallingParticles = Array.from({ length: total }, () => spawnFallingItem(false));
+      animateFallingFlowers();
+    }
 
-    /* ==========================================================
-       8. REPLAY SURPRISE
-       ========================================================== */
-    document.getElementById('replayBtn').addEventListener('click', () => {
-      candleBlown = false;
-      document.getElementById('candleFlame').classList.remove('extinguished');
-      document.getElementById('candleSmoke').classList.remove('active');
-      document.getElementById('blowControls').style.display = 'flex';
-      document.getElementById('wishSuccessBlock').classList.remove('revealed');
-      document.getElementById('fireworksHint').style.display = 'none';
-      fireworksEnabled = false;
-      fwCanvas.classList.remove('active');
-
-      const envelope = document.getElementById('envelopeBox');
-      const openBtn = document.getElementById('openEnvelopeBtn');
-      const paper = document.getElementById('letterPaper');
-      clearTimeout(typingTimeout);
-      envelope.style.display = 'flex';
-      envelope.classList.remove('opened');
-      openBtn.style.display = 'inline-flex';
-      paper.classList.remove('visible');
-      paper.style.display = 'none';
-      document.getElementById('typewriterBody').innerHTML = '';
-      document.getElementById('specialFooter').style.display = 'none';
-      document.getElementById('replayContainer').classList.remove('show');
-
-      goToSlide(0);
-    });
+    function stopFallingFlowers() {
+      fallingActive = false;
+      if (fallingAnimId) cancelAnimationFrame(fallingAnimId);
+      fallCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    }
   </script>
 </body>
 </html>
